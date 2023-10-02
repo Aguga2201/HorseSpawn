@@ -2,14 +2,13 @@
 	"schemaVersion": 1,
 	"id": "horse-spawn",
 	"version": "${version}",
-	"name": "Horse-Spawn",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"name": "Horse Spawn",
+	"description": "Spawns a saddled horse near you when you enter a world for the first time!",
 	"authors": [
-		"Me!"
+		"Aguga2201"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"sources": "https://github.com/Aguga2201/HorseSpawn"
 	},
 	"license": "MIT",
 	"icon": "assets/horse-spawn/icon.png",
