@@ -5,9 +5,7 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.client.sound.Sound;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.passive.HorseColor;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -38,7 +36,6 @@ public class HorseSpawn implements ModInitializer
 		IEntityDataSaver iPlayer = (IEntityDataSaver) player;
 		NbtCompound nbt = iPlayer.getPersistentData();
 		boolean isNotNew = nbt.getBoolean("isNotNew");
-		LOGGER.info("" + isNotNew);
 
 		if (horseEntity != null && !isNotNew)
 		{
