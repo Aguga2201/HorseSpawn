@@ -42,6 +42,8 @@ public class HorseSpawn implements ModInitializer
 			horseEntity.setPosition(player.getX(), player.getY(), player.getZ());
 			horseEntity.setTame(true);
 			horseEntity.saddle(SoundCategory.NEUTRAL);
+			horseEntity.setHealth(24);
+			horseEntity.setVelocity(2, 0, 0);
 			serverWorld.spawnEntity(horseEntity);
 
 			isNotNew = true;
