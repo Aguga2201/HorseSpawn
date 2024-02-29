@@ -6,7 +6,11 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.SpawnReason;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.passive.HorseColor;
 import net.minecraft.entity.passive.HorseEntity;
+import net.minecraft.entity.passive.HorseMarking;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
@@ -15,6 +19,7 @@ import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import java.util.Random;
 
 public class HorseSpawn implements ModInitializer
 {
@@ -39,10 +44,11 @@ public class HorseSpawn implements ModInitializer
 
 		if (horseEntity != null && !isNotNew)
 		{
-			horseEntity.setPosition(player.getX(), player.getY(), player.getZ());
+			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null, null);
+
 			horseEntity.setTame(true);
 			horseEntity.saddle(SoundCategory.NEUTRAL);
-			horseEntity.setHealth(24);
+			horseEntity.setPosition(player.getX(), player.getY(), player.getZ());
 			horseEntity.setVelocity(2, 0, 0);
 			serverWorld.spawnEntity(horseEntity);
 
