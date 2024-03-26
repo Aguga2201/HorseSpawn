@@ -1,0 +1,11 @@
+{
+  "text.config.horse-spawn-config.title": "Horse Spawn Config",
+
+  "text.config.horse-spawn-config.option.Mob": "Mob",
+  "text.config.horse-spawn-config.enum.choices.horse": "Horse",
+  "text.config.horse-spawn-config.enum.choices.donkey": "Donkey",
+  "text.config.horse-spawn-config.enum.choices.dolphin": "Dolphin?",
+
+  "text.config.horse-spawn-config.option.saddle": "saddled",
+  "text.config.horse-spawn-config.option.chest": "chest (for donkey)"
+}
