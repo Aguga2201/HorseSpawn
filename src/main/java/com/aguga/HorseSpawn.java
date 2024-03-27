@@ -19,7 +19,6 @@ import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.world.GameMode;
-import net.minecraft.world.GameRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -51,44 +50,50 @@ public class HorseSpawn implements ModInitializer
 		if(CONFIG.Mob() == ConfigModel.Choices.HORSE)
 		{
 			HorseEntity horseEntity = EntityType.HORSE.create(serverWorld);
-			if (horseEntity != null && !isNotNew)
-			{
-				horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null, null);
 
-				horseEntity.setTame(true);
-				if(CONFIG.saddle()) {horseEntity.saddle(SoundCategory.NEUTRAL);}
-				horseEntity.setPosition(player.getX(), player.getY(), player.getZ());
-				horseEntity.setVelocity(2, 0, 0);
-				serverWorld.spawnEntity(horseEntity);
+			if (horseEntity == null || isNotNew)
+				return;
 
-				isNotNew = true;
-				nbt.putBoolean("isNotNew", isNotNew);
-			}
+			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null, null);
+
+			horseEntity.setTame(true);
+			if(CONFIG.saddle())
+				horseEntity.saddle(SoundCategory.NEUTRAL);
+			horseEntity.setPosition(player.getX(), player.getY(), player.getZ());
+			horseEntity.setVelocity(2, 0, 0);
+			serverWorld.spawnEntity(horseEntity);
+
+			isNotNew = true;
+			nbt.putBoolean("isNotNew", isNotNew);
 		} else if (CONFIG.Mob() == ConfigModel.Choices.DONKEY)
 		{
 			DonkeyEntity donkeyEntity = EntityType.DONKEY.create(serverWorld);
-			if (donkeyEntity != null && !isNotNew)
-			{
-				donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null, null);
 
-				donkeyEntity.setTame(true);
-				if(CONFIG.saddle()) {donkeyEntity.saddle(SoundCategory.NEUTRAL);}
-				if(CONFIG.chest()) {donkeyEntity.setHasChest(true);}
-				donkeyEntity.setPosition(player.getX(), player.getY(), player.getZ());
-				donkeyEntity.setVelocity(2, 0, 0);
-				serverWorld.spawnEntity(donkeyEntity);
+			if (donkeyEntity == null || isNotNew)
+				return;
 
-				isNotNew = true;
-				nbt.putBoolean("isNotNew", isNotNew);
-			}
+			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null, null);
+
+			donkeyEntity.setTame(true);
+			if(CONFIG.saddle())
+				donkeyEntity.saddle(SoundCategory.NEUTRAL);
+			if(CONFIG.chest())
+				donkeyEntity.setHasChest(true);
+			donkeyEntity.setPosition(player.getX(), player.getY(), player.getZ());
+			donkeyEntity.setVelocity(2, 0, 0);
+			serverWorld.spawnEntity(donkeyEntity);
+
+			isNotNew = true;
+			nbt.putBoolean("isNotNew", isNotNew);
 		} else if (CONFIG.Mob() == ConfigModel.Choices.DOLPHIN)
 		{
 			DolphinEntity dolphinEntity = EntityType.DOLPHIN.create(serverWorld);
-			if (dolphinEntity != null && !isNotNew)
-			{
-				dolphinEntity.setPosition(player.getX(), player.getY(), player.getZ());
-				serverWorld.spawnEntity(dolphinEntity);
-			}
+
+			if (dolphinEntity == null || isNotNew)
+				return;
+
+			dolphinEntity.setPosition(player.getX(), player.getY(), player.getZ());
+			serverWorld.spawnEntity(dolphinEntity);
 		}
 
 
