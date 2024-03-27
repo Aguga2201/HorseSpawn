@@ -18,6 +18,8 @@ import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.world.GameMode;
+import net.minecraft.world.GameRules;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,10 +39,14 @@ public class HorseSpawn implements ModInitializer
 	{
 		PlayerEntity player = serverPlayNetworkHandler.getPlayer();
 		ServerWorld serverWorld = (ServerWorld) player.getWorld();
+		GameMode defaultGameMode = minecraftServer.getDefaultGameMode();
 
 		IEntityDataSaver iPlayer = (IEntityDataSaver) player;
 		NbtCompound nbt = iPlayer.getPersistentData();
 		boolean isNotNew = nbt.getBoolean("isNotNew");
+
+		if(!CONFIG.spawnInCreative() && defaultGameMode == GameMode.CREATIVE)
+			return;
 
 		if(CONFIG.Mob() == ConfigModel.Choices.HORSE)
 		{

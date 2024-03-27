@@ -15,6 +15,7 @@ public class ConfigModel
         HORSE, DONKEY, DOLPHIN
     }
 
+    public boolean spawnInCreative = true;
     public boolean saddle = true;
     public boolean chest = true;
 }
