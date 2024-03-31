@@ -1,12 +1,18 @@
 {
   "text.config.horse-spawn-config.title": "Horse Spawn Config",
+  "text.config.horse-spawn-config.section.Attributes": "Attributes",
+  "text.config.horse-spawn-config.section.General": "General",
 
-  "text.config.horse-spawn-config.option.Mob": "Mob",
+  "text.config.horse-spawn-config.option.Mob": "Entity",
   "text.config.horse-spawn-config.enum.choices.horse": "Horse",
   "text.config.horse-spawn-config.enum.choices.donkey": "Donkey",
   "text.config.horse-spawn-config.enum.choices.dolphin": "Dolphin?",
 
-  "text.config.horse-spawn-config.option.saddle": "saddled",
-  "text.config.horse-spawn-config.option.chest": "chest (for donkey)",
-  "text.config.horse-spawn-config.option.spawnInCreative": "spawn in creative world"
+  "text.config.horse-spawn-config.option.saddle": "Saddle",
+  "text.config.horse-spawn-config.option.chest": "Chest (for donkey)",
+  "text.config.horse-spawn-config.option.spawnInCreative": "Spawn in Creative World",
+  "text.config.horse-spawn-config.option.randomAttributes": "Random (overwrites values below)",
+  "text.config.horse-spawn-config.option.health": "Health",
+  "text.config.horse-spawn-config.option.speed": "Speed",
+  "text.config.horse-spawn-config.option.jump": "Jump"
 }
