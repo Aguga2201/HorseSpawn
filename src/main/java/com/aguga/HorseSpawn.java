@@ -56,11 +56,11 @@ public class HorseSpawn implements ModInitializer
 				return;
 
 			if(CONFIG.randomAttributes())
-				horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null, null);
+				horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
 			else
 			{
 				horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed()));
-				horseEntity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump()));
+				horseEntity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump()));
 				horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health());
 			}
 
@@ -81,11 +81,11 @@ public class HorseSpawn implements ModInitializer
 				return;
 
 			if(CONFIG.randomAttributes())
-				donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null, null);
+				donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
 			else
 			{
 				donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed()));
-				donkeyEntity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump()));
+				donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump()));
 				donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health());
 			}
 
