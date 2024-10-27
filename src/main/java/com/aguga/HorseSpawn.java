@@ -75,9 +75,7 @@ public class HorseSpawn implements ModInitializer
 			if(CONFIG.saddle())
 				horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
 			int[] entityCoordinates = getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld);
-			LOGGER.info("Horse coordinates: " + entityCoordinates[0] + ", " + entityCoordinates[1] + ", " + entityCoordinates[2]);
 			horseEntity.setPosition(entityCoordinates[0], entityCoordinates[1], entityCoordinates[2]);
-			horseEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, Integer.MAX_VALUE, 0, false, false));
 			serverWorld.spawnEntity(horseEntity);
 
 			isNotNew = true;
