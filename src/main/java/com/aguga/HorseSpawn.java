@@ -10,18 +10,26 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.passive.DolphinEntity;
 import net.minecraft.entity.passive.DonkeyEntity;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.Items;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.world.GameMode;
+import net.minecraft.world.Heightmap;
+import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Random;
 
 public class HorseSpawn implements ModInitializer
 {
@@ -50,48 +58,49 @@ public class HorseSpawn implements ModInitializer
 
 		if(CONFIG.Mob() == ConfigModel.Choices.HORSE)
 		{
-			HorseEntity horseEntity = EntityType.HORSE.create(serverWorld);
+			HorseEntity horseEntity = EntityType.HORSE.create(serverWorld, SpawnReason.EVENT);
 
 			if(horseEntity == null || isNotNew)
 				return;
 
-			if(CONFIG.randomAttributes())
-				horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
-			else
+			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
+			if(!CONFIG.randomAttributes())
 			{
-				horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed()));
-				horseEntity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump()));
-				horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health());
+				horseEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed()));
+				horseEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump()));
+				horseEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health());
 			}
 
 			horseEntity.setTame(true);
 			if(CONFIG.saddle())
-				horseEntity.saddle(SoundCategory.NEUTRAL);
-			horseEntity.setPosition(player.getX(), player.getY(), player.getZ());
-			horseEntity.setVelocity(2, 0, 0);
+				horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+			int[] horseCoordinates = getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld);
+			LOGGER.info("Horse coordinates: " + horseCoordinates[0] + ", " + horseCoordinates[1] + ", " + horseCoordinates[2]);
+			horseEntity.setPosition(horseCoordinates[0], horseCoordinates[1], horseCoordinates[2]);
+			horseEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, Integer.MAX_VALUE, 0, false, false));
 			serverWorld.spawnEntity(horseEntity);
 
 			isNotNew = true;
 			nbt.putBoolean("isNotNew", isNotNew);
-		} else if (CONFIG.Mob() == ConfigModel.Choices.DONKEY)
+		}
+		else if (CONFIG.Mob() == ConfigModel.Choices.DONKEY)
 		{
-			DonkeyEntity donkeyEntity = EntityType.DONKEY.create(serverWorld);
+			DonkeyEntity donkeyEntity = EntityType.DONKEY.create(serverWorld, SpawnReason.EVENT);
 
 			if (donkeyEntity == null || isNotNew)
 				return;
 
-			if(CONFIG.randomAttributes())
-				donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
-			else
+			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
+			if(!CONFIG.randomAttributes())
 			{
-				donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed()));
-				donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump()));
-				donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health());
+				donkeyEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed()));
+				donkeyEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump()));
+				donkeyEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health());
 			}
 
 			donkeyEntity.setTame(true);
 			if(CONFIG.saddle())
-				donkeyEntity.saddle(SoundCategory.NEUTRAL);
+				donkeyEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
 			if(CONFIG.chest())
 				donkeyEntity.setHasChest(true);
 			donkeyEntity.setPosition(player.getX(), player.getY(), player.getZ());
@@ -102,7 +111,7 @@ public class HorseSpawn implements ModInitializer
 			nbt.putBoolean("isNotNew", isNotNew);
 		} else if (CONFIG.Mob() == ConfigModel.Choices.DOLPHIN)
 		{
-			DolphinEntity dolphinEntity = EntityType.DOLPHIN.create(serverWorld);
+			DolphinEntity dolphinEntity = EntityType.DOLPHIN.create(serverWorld, SpawnReason.EVENT);
 
 			if (dolphinEntity == null || isNotNew)
 				return;
@@ -148,5 +157,19 @@ public class HorseSpawn implements ModInitializer
 		}
 
 		return guess;
+	}
+
+	public int[] getEntityCoordinates(int playerX, int playerZ, World world)
+	{
+		Random random = new Random();
+		int[][] offsets = {
+				{8, 0}, {6, 6}, {0, 8}, {-6, 6},
+				{-8, 0}, {-6, -6}, {0, -8}, {6, -6}
+		};
+		int[] selectedOffset = offsets[random.nextInt(offsets.length)];
+		int newX = playerX + selectedOffset[0];
+		int newZ = playerZ + selectedOffset[1];
+		int topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, newX, newZ);
+		return new int[]{newX, topY, newZ};
 	}
 }
