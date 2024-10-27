@@ -74,9 +74,9 @@ public class HorseSpawn implements ModInitializer
 			horseEntity.setTame(true);
 			if(CONFIG.saddle())
 				horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
-			int[] horseCoordinates = getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld);
-			LOGGER.info("Horse coordinates: " + horseCoordinates[0] + ", " + horseCoordinates[1] + ", " + horseCoordinates[2]);
-			horseEntity.setPosition(horseCoordinates[0], horseCoordinates[1], horseCoordinates[2]);
+			int[] entityCoordinates = getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld);
+			LOGGER.info("Horse coordinates: " + entityCoordinates[0] + ", " + entityCoordinates[1] + ", " + entityCoordinates[2]);
+			horseEntity.setPosition(entityCoordinates[0], entityCoordinates[1], entityCoordinates[2]);
 			horseEntity.addStatusEffect(new StatusEffectInstance(StatusEffects.GLOWING, Integer.MAX_VALUE, 0, false, false));
 			serverWorld.spawnEntity(horseEntity);
 
@@ -103,8 +103,8 @@ public class HorseSpawn implements ModInitializer
 				donkeyEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
 			if(CONFIG.chest())
 				donkeyEntity.setHasChest(true);
-			donkeyEntity.setPosition(player.getX(), player.getY(), player.getZ());
-			donkeyEntity.setVelocity(2, 0, 0);
+			int[] entityCoordinates = getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld);
+			donkeyEntity.setPosition(entityCoordinates[0], entityCoordinates[1], entityCoordinates[2]);
 			serverWorld.spawnEntity(donkeyEntity);
 
 			isNotNew = true;
