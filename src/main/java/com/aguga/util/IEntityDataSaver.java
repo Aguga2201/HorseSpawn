@@ -4,5 +4,6 @@ import net.minecraft.nbt.NbtCompound;
 
 public interface IEntityDataSaver
 {
-    NbtCompound getPersistentData();
+    boolean getPersistentData();
+    void setHasSpawnedHorse(boolean value);
 }

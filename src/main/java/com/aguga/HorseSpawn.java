@@ -1,27 +1,20 @@
 package com.aguga;
 
-import com.aguga.config.ConfigModel;
-import com.aguga.config.HorseSpawnConfig;
 import com.aguga.util.IEntityDataSaver;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.passive.DolphinEntity;
-import net.minecraft.entity.passive.DonkeyEntity;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.world.GameMode;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
@@ -31,8 +24,9 @@ import java.util.Random;
 
 public class HorseSpawn implements ModInitializer
 {
-	public static final HorseSpawnConfig CONFIG = HorseSpawnConfig.createAndLoad();
-    public static final Logger LOGGER = LoggerFactory.getLogger("horse-spawn");
+	//public static final HorseSpawnConfig CONFIG = HorseSpawnConfig.createAndLoad();
+    public static final String MOD_ID = "horse-spawn";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	@Override
 	public void onInitialize()
@@ -43,25 +37,28 @@ public class HorseSpawn implements ModInitializer
 
 	private void spawnHorseForPlayer(ServerPlayNetworkHandler serverPlayNetworkHandler, PacketSender packetSender, MinecraftServer minecraftServer)
 	{
-		PlayerEntity player = serverPlayNetworkHandler.getPlayer();
-		ServerWorld serverWorld = (ServerWorld) player.getWorld();
-		GameMode defaultGameMode = minecraftServer.getDefaultGameMode();
+        PlayerEntity player = serverPlayNetworkHandler.getPlayer();
+		ServerWorld serverWorld = (ServerWorld) player.getEntityWorld();
 
 		IEntityDataSaver iPlayer = (IEntityDataSaver) player;
-		NbtCompound nbt = iPlayer.getPersistentData();
-		boolean isNotNew = nbt.getBoolean("isNotNew");
+		boolean hasSpawnedHorse = iPlayer.getPersistentData();
 
+        /*
 		if(!CONFIG.spawnInCreative() && defaultGameMode == GameMode.CREATIVE)
 			return;
 
 		if(CONFIG.Mob() == ConfigModel.Choices.HORSE)
 		{
+
+         */
+
 			HorseEntity horseEntity = EntityType.HORSE.create(serverWorld, SpawnReason.EVENT);
 
-			if(horseEntity == null || isNotNew)
+			if(horseEntity == null || hasSpawnedHorse)
 				return;
 
 			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
+            /*
 			if(!CONFIG.randomAttributes())
 			{
 				horseEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed()));
@@ -69,21 +66,26 @@ public class HorseSpawn implements ModInitializer
 				horseEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health());
 			}
 
-			horseEntity.setTame(true);
-			if(CONFIG.saddle())
-				horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+             */
+
+            horseEntity.setTame(true);
+
 			int[] entityCoordinates = getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld);
 			horseEntity.setPosition(entityCoordinates[0], entityCoordinates[1], entityCoordinates[2]);
 			serverWorld.spawnEntity(horseEntity);
 
-			isNotNew = true;
-			nbt.putBoolean("isNotNew", isNotNew);
+            //if(CONFIG.saddle())
+                horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+
+			hasSpawnedHorse = true;
+
+            /*
 		}
 		else if (CONFIG.Mob() == ConfigModel.Choices.DONKEY)
 		{
 			DonkeyEntity donkeyEntity = EntityType.DONKEY.create(serverWorld, SpawnReason.EVENT);
 
-			if (donkeyEntity == null || isNotNew)
+			if (donkeyEntity == null || hasSpawnedHorse)
 				return;
 
 			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
@@ -95,26 +97,31 @@ public class HorseSpawn implements ModInitializer
 			}
 
 			donkeyEntity.setTame(true);
-			if(CONFIG.saddle())
-				donkeyEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+
 			if(CONFIG.chest())
 				donkeyEntity.setHasChest(true);
 			int[] entityCoordinates = getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld);
 			donkeyEntity.setPosition(entityCoordinates[0], entityCoordinates[1], entityCoordinates[2]);
 			serverWorld.spawnEntity(donkeyEntity);
 
-			isNotNew = true;
-			nbt.putBoolean("isNotNew", isNotNew);
+            if(CONFIG.saddle())
+                donkeyEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+
+			hasSpawnedHorse = true;
 		} else if (CONFIG.Mob() == ConfigModel.Choices.DOLPHIN)
 		{
 			DolphinEntity dolphinEntity = EntityType.DOLPHIN.create(serverWorld, SpawnReason.EVENT);
 
-			if (dolphinEntity == null || isNotNew)
+			if (dolphinEntity == null || hasSpawnedHorse)
 				return;
 
 			dolphinEntity.setPosition(player.getX(), player.getY(), player.getZ());
 			serverWorld.spawnEntity(dolphinEntity);
 		}
+
+             */
+
+        iPlayer.setHasSpawnedHorse(hasSpawnedHorse);
 	}
 
 	public double blocksPerSecToSpeed(double blocksPerSec)
