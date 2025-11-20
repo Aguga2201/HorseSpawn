@@ -8,10 +8,10 @@ public class HorseSpawnConfig {
     }
 
     public boolean enableSaddle = true;
-    public boolean enableChest = false;
+    public boolean enableChest = true;
     public boolean spawnInCreative = true;
-    public boolean enableRandomAttributes = true;
     public boolean spawnOnce = true;
+    public boolean overwriteStats = false;
     public float speed = 10.0f;
     public float jump = 3.0f;
     public int health = 20;

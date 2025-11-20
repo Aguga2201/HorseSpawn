@@ -64,10 +64,11 @@ public class HorseSpawn implements ModInitializer {
             }
 
 			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
-			if(!CONFIG.enableRandomAttributes) {
+			if(CONFIG.overwriteStats) {
 				horseEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
 				horseEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
 				horseEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
+                LOGGER.info(jumpHeightToJumpStrength(CONFIG.jump) + "");
 			}
 
             horseEntity.setTame(true);
@@ -90,7 +91,7 @@ public class HorseSpawn implements ModInitializer {
             }
 
 			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
-			if(!CONFIG.enableRandomAttributes) {
+			if(CONFIG.overwriteStats) {
 				donkeyEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
 				donkeyEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
 				donkeyEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
