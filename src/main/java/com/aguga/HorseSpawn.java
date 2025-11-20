@@ -7,6 +7,7 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
@@ -17,9 +18,12 @@ import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
@@ -55,26 +59,19 @@ public class HorseSpawn implements ModInitializer {
             return;
         }
 
-		if(CONFIG.spawnType == HorseSpawnConfig.SpawnType.HORSE) {
+        Entity entity = Registries.ENTITY_TYPE.get(Identifier.of("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, SpawnReason.EVENT);
 
-			HorseEntity horseEntity = EntityType.HORSE.create(serverWorld, SpawnReason.EVENT);
-
-			if(horseEntity == null) {
-                return;
-            }
-
+		if(entity instanceof HorseEntity horseEntity) {
 			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
 			if(CONFIG.overwriteStats) {
 				horseEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
 				horseEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
 				horseEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
-                LOGGER.info(jumpHeightToJumpStrength(CONFIG.jump) + "");
 			}
 
             horseEntity.setTame(true);
 
-			int[] entityCoordinates = getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld);
-			horseEntity.setPosition(entityCoordinates[0], entityCoordinates[1], entityCoordinates[2]);
+			horseEntity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
 			serverWorld.spawnEntity(horseEntity);
 
             if(CONFIG.enableSaddle) {
@@ -83,13 +80,7 @@ public class HorseSpawn implements ModInitializer {
 
 			hasSpawnedHorse = true;
 		}
-		else if (CONFIG.spawnType == HorseSpawnConfig.SpawnType.DONKEY) {
-			DonkeyEntity donkeyEntity = EntityType.DONKEY.create(serverWorld, SpawnReason.EVENT);
-
-			if (donkeyEntity == null) {
-                return;
-            }
-
+		else if (entity instanceof DonkeyEntity donkeyEntity) {
 			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
 			if(CONFIG.overwriteStats) {
 				donkeyEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
@@ -102,8 +93,7 @@ public class HorseSpawn implements ModInitializer {
 			if(CONFIG.enableChest) {
                 donkeyEntity.setHasChest(true);
             }
-			int[] entityCoordinates = getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld);
-			donkeyEntity.setPosition(entityCoordinates[0], entityCoordinates[1], entityCoordinates[2]);
+			donkeyEntity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
 			serverWorld.spawnEntity(donkeyEntity);
 
             if(CONFIG.enableSaddle) {
@@ -111,15 +101,9 @@ public class HorseSpawn implements ModInitializer {
             }
 
 			hasSpawnedHorse = true;
-		} else if (CONFIG.spawnType == HorseSpawnConfig.SpawnType.DOLPHIN) {
-			DolphinEntity dolphinEntity = EntityType.DOLPHIN.create(serverWorld, SpawnReason.EVENT);
-
-			if (dolphinEntity == null) {
-                return;
-            }
-
-			dolphinEntity.setPosition(player.getX(), player.getY(), player.getZ());
-			serverWorld.spawnEntity(dolphinEntity);
+		} else {
+			entity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
+			serverWorld.spawnEntity(entity);
 		}
 
         iPlayer.setHasSpawnedHorse(hasSpawnedHorse);
@@ -165,7 +149,7 @@ public class HorseSpawn implements ModInitializer {
         return (low + high) / 2.0;
     }
 
-	public int[] getEntityCoordinates(int playerX, int playerZ, World world) {
+	public Vec3d getEntityCoordinates(int playerX, int playerZ, World world) {
 		Random random = new Random();
 		int[][] offsets = {
 				{8, 0}, {6, 6}, {0, 8}, {-6, 6},
@@ -175,6 +159,6 @@ public class HorseSpawn implements ModInitializer {
 		int newX = playerX + selectedOffset[0];
 		int newZ = playerZ + selectedOffset[1];
 		int topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, newX, newZ);
-		return new int[]{newX, topY, newZ};
+		return new Vec3d(newX, topY, newZ);
 	}
 }
