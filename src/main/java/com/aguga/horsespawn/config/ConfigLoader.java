@@ -1,6 +1,6 @@
-package com.aguga.config;
+package com.aguga.horsespawn.config;
 
-import com.aguga.HorseSpawn;
+import com.aguga.horsespawn.HorseSpawn;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import net.fabricmc.loader.api.FabricLoader;

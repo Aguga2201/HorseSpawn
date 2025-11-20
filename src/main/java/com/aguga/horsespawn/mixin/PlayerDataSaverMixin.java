@@ -1,6 +1,6 @@
-package com.aguga.mixin;
+package com.aguga.horsespawn.mixin;
 
-import com.aguga.util.IPlayerDataSaver;
+import com.aguga.horsespawn.util.IPlayerDataSaver;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.storage.ReadView;
 import net.minecraft.storage.WriteView;

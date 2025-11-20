@@ -1,8 +1,8 @@
-package com.aguga;
+package com.aguga.horsespawn;
 
-import com.aguga.config.ConfigManager;
-import com.aguga.config.HorseSpawnConfig;
-import com.aguga.util.IPlayerDataSaver;
+import com.aguga.horsespawn.config.ConfigManager;
+import com.aguga.horsespawn.config.HorseSpawnConfig;
+import com.aguga.horsespawn.util.IPlayerDataSaver;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
