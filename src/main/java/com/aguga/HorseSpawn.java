@@ -2,17 +2,15 @@ package com.aguga;
 
 import com.aguga.config.ConfigManager;
 import com.aguga.config.HorseSpawnConfig;
-import com.aguga.util.IEntityDataSaver;
+import com.aguga.util.IPlayerDataSaver;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.passive.DolphinEntity;
 import net.minecraft.entity.passive.DonkeyEntity;
 import net.minecraft.entity.passive.HorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -52,18 +50,22 @@ public class HorseSpawn implements ModInitializer {
         PlayerEntity player = serverPlayNetworkHandler.getPlayer();
 		ServerWorld serverWorld = (ServerWorld) player.getEntityWorld();
 
-		IEntityDataSaver iPlayer = (IEntityDataSaver) player;
-		boolean hasSpawnedHorse = iPlayer.getPersistentData();
 
-		if(!CONFIG.spawnInCreative && player.getGameMode() == GameMode.CREATIVE || CONFIG.spawnOnce && hasSpawnedHorse) {
+		if (!CONFIG.spawnInCreative && player.getGameMode() == GameMode.CREATIVE) {
             return;
         }
 
+        IPlayerDataSaver playerDataSaver = (IPlayerDataSaver) player;
+        if (CONFIG.spawnOnce && playerDataSaver.getHasSpawnedHorse()) {
+            return;
+        }
+        playerDataSaver.setHasSpawnedHorse(true);
+
         Entity entity = Registries.ENTITY_TYPE.get(Identifier.of("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, SpawnReason.EVENT);
 
-		if(entity instanceof HorseEntity horseEntity) {
+		if (entity instanceof HorseEntity horseEntity) {
 			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
-			if(CONFIG.overwriteStats) {
+			if (CONFIG.overwriteStats) {
 				horseEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
 				horseEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
 				horseEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
@@ -74,15 +76,13 @@ public class HorseSpawn implements ModInitializer {
 			horseEntity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
 			serverWorld.spawnEntity(horseEntity);
 
-            if(CONFIG.enableSaddle) {
+            if (CONFIG.enableSaddle) {
                 horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
             }
-
-			hasSpawnedHorse = true;
 		}
 		else if (entity instanceof DonkeyEntity donkeyEntity) {
 			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
-			if(CONFIG.overwriteStats) {
+			if (CONFIG.overwriteStats) {
 				donkeyEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
 				donkeyEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
 				donkeyEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
@@ -90,23 +90,20 @@ public class HorseSpawn implements ModInitializer {
 
 			donkeyEntity.setTame(true);
 
-			if(CONFIG.enableChest) {
+			if (CONFIG.enableChest) {
                 donkeyEntity.setHasChest(true);
             }
 			donkeyEntity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
 			serverWorld.spawnEntity(donkeyEntity);
 
-            if(CONFIG.enableSaddle) {
+            if (CONFIG.enableSaddle) {
                 donkeyEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
             }
-
-			hasSpawnedHorse = true;
 		} else {
 			entity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
 			serverWorld.spawnEntity(entity);
 		}
 
-        iPlayer.setHasSpawnedHorse(hasSpawnedHorse);
 	}
 
 	public double blocksPerSecToSpeed(double blocksPerSec) {
