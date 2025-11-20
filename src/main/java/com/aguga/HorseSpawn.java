@@ -138,26 +138,32 @@ public class HorseSpawn implements ModInitializer {
 		return height;
 	}
 
-	public double jumpHeightToJumpStrength(double height) {
-		double guess = 0.35;
-		double deviation = height - jumpStrengthToJumpHeight(guess);
+    public double jumpHeightToJumpStrength(double height) {
+        double tol = 0.0001;
+        double low = 0.0;
+        double high = 1.0;
 
-		while(deviation > 0.005) {
-			if(deviation > 10)
-				guess += 0.8;
-			else if(deviation > 5)
-				guess += 0.4;
-			else if(deviation > 1)
-				guess += 0.02;
-			else if(deviation > 0.2)
-				guess += 0.01;
-			else if(deviation > 0)
-				guess += 0.0005;
-			deviation = height - jumpStrengthToJumpHeight(guess);
-		}
+        int expandLimit = 50;
+        int expands = 0;
+        while (jumpStrengthToJumpHeight(high) < height && expands++ < expandLimit) {
+            high *= 2;
+        }
 
-		return guess;
-	}
+        for (int i = 0; i < 20; i++) {
+            double mid = (low + high) / 2.0;
+            double midHeight = jumpStrengthToJumpHeight(mid);
+            if (Math.abs(midHeight - height) <= tol) {
+                return mid;
+            }
+            if (midHeight < height) {
+                low = mid;
+            } else {
+                high = mid;
+            }
+        }
+
+        return (low + high) / 2.0;
+    }
 
 	public int[] getEntityCoordinates(int playerX, int playerZ, World world) {
 		Random random = new Random();
