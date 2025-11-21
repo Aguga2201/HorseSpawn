@@ -8,7 +8,6 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.passive.DonkeyEntity;
@@ -27,6 +26,11 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+//? if >=1.21.10 {
+/*import net.minecraft.entity.EquipmentSlot;
+*///?} else {
+import net.minecraft.sound.SoundCategory;
+//?}
 
 import java.util.Random;
 
@@ -50,10 +54,15 @@ public class HorseSpawn implements ModInitializer {
         PlayerEntity player = serverPlayNetworkHandler.getPlayer();
 		ServerWorld serverWorld = (ServerWorld) player.getEntityWorld();
 
-
-		if (!CONFIG.spawnInCreative && player.getGameMode() == GameMode.CREATIVE) {
+        //? if >=1.21.10 {
+        /*if (!CONFIG.spawnInCreative && player.getGameMode() == GameMode.CREATIVE) {
             return;
         }
+        *///?} else {
+		if (!CONFIG.spawnInCreative && minecraftServer.getDefaultGameMode() == GameMode.CREATIVE) {
+            return;
+        }
+        //?}
 
         IPlayerDataSaver playerDataSaver = (IPlayerDataSaver) player;
         if (CONFIG.spawnOnce && playerDataSaver.getHasSpawnedHorse()) {
@@ -77,7 +86,11 @@ public class HorseSpawn implements ModInitializer {
 			serverWorld.spawnEntity(horseEntity);
 
             if (CONFIG.enableSaddle) {
-                horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+                //? if >=1.21.10 {
+                /*horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+                *///?} else {
+                horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+                //?}
             }
 		}
 		else if (entity instanceof DonkeyEntity donkeyEntity) {
@@ -97,7 +110,11 @@ public class HorseSpawn implements ModInitializer {
 			serverWorld.spawnEntity(donkeyEntity);
 
             if (CONFIG.enableSaddle) {
-                donkeyEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+                //? if >=1.21.10 {
+                /*donkeyEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+                 *///?} else {
+                donkeyEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+                //?}
             }
 		} else {
 			entity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
