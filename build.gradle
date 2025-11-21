@@ -4,7 +4,7 @@ plugins {
 }
 
 base {
-	archivesName = project.archives_base_name
+	archivesName = "${project.archives_base_name}-${project.version}-${stonecutter.current.version}"
 }
 
 repositories {
@@ -25,22 +25,20 @@ loom {
 dependencies {
 	// To change the versions see the gradle.properties file
 	minecraft "com.mojang:minecraft:${stonecutter.current.project}"
-	mappings "net.fabricmc:yarn:${property('deps.yarn_mappings')}:v2"
-	modImplementation "net.fabricmc:fabric-loader:${property('deps.fabric_loader')}"
+	mappings "net.fabricmc:yarn:${property('yarn_mappings')}:v2"
+	modImplementation "net.fabricmc:fabric-loader:${property('loader_version')}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "net.fabricmc.fabric-api:fabric-api:${property('deps.fabric_api')}"
+	modImplementation "net.fabricmc.fabric-api:fabric-api:${property('fabric_version')}"
 }
 
 processResources {
 	inputs.property "version", project.version
     inputs.property "minecraft", stonecutter.current.version
 
-    def map = ["version": project.version, "minecraft": stonecutter.current.version]
-
 	filesMatching("fabric.mod.json") {
-		expand map
-	}
+        expand version: project.version, minecraft: stonecutter.current.version
+    }
 }
 
 tasks.withType(JavaCompile).configureEach {

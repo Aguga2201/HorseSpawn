@@ -27,10 +27,10 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 //? if >=1.21.10 {
-/*import net.minecraft.entity.EquipmentSlot;
-*///?} else {
-import net.minecraft.sound.SoundCategory;
-//?}
+import net.minecraft.entity.EquipmentSlot;
+//?} else {
+/*import net.minecraft.sound.SoundCategory;
+*///?}
 
 import java.util.Random;
 
@@ -54,15 +54,9 @@ public class HorseSpawn implements ModInitializer {
         PlayerEntity player = serverPlayNetworkHandler.getPlayer();
 		ServerWorld serverWorld = (ServerWorld) player.getEntityWorld();
 
-        //? if >=1.21.10 {
-        /*if (!CONFIG.spawnInCreative && player.getGameMode() == GameMode.CREATIVE) {
+        if (!CONFIG.spawnInCreative && minecraftServer.getDefaultGameMode() == GameMode.CREATIVE) {
             return;
         }
-        *///?} else {
-		if (!CONFIG.spawnInCreative && minecraftServer.getDefaultGameMode() == GameMode.CREATIVE) {
-            return;
-        }
-        //?}
 
         IPlayerDataSaver playerDataSaver = (IPlayerDataSaver) player;
         if (CONFIG.spawnOnce && playerDataSaver.getHasSpawnedHorse()) {
@@ -87,10 +81,10 @@ public class HorseSpawn implements ModInitializer {
 
             if (CONFIG.enableSaddle) {
                 //? if >=1.21.10 {
-                /*horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
-                *///?} else {
-                horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
-                //?}
+                horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+                //?} else {
+                /*horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+                *///?}
             }
 		}
 		else if (entity instanceof DonkeyEntity donkeyEntity) {
@@ -111,10 +105,10 @@ public class HorseSpawn implements ModInitializer {
 
             if (CONFIG.enableSaddle) {
                 //? if >=1.21.10 {
-                /*donkeyEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
-                 *///?} else {
-                donkeyEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
-                //?}
+                donkeyEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+                 //?} else {
+                /*donkeyEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+                *///?}
             }
 		} else {
 			entity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
