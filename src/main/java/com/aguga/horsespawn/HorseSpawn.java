@@ -64,7 +64,7 @@ public class HorseSpawn implements ModInitializer {
         Entity entity = Registries.ENTITY_TYPE.get(Identifier.of("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld /*? >=1.21.4 {*/, SpawnReason.EVENT /*?}*/);
 
 		if (entity instanceof HorseEntity horseEntity) {
-			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.1 {*//*, null *//*?}*/);
+			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.4 {*//*, null *//*?}*/);
 			if (CONFIG.overwriteStats) {
                 //? if >=1.21.4 {
 				horseEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
@@ -97,7 +97,7 @@ public class HorseSpawn implements ModInitializer {
             }
 		}
 		else if (entity instanceof DonkeyEntity donkeyEntity) {
-			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.1 {*//*, null *//*?}*/);
+			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.4 {*//*, null *//*?}*/);
 			if (CONFIG.overwriteStats) {
                 //? if >=1.21.4 {
 				donkeyEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
