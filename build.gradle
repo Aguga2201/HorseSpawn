@@ -6,7 +6,7 @@ plugins {
 version = project.mod_version
 
 base {
-	archivesName = "${project.archives_base_name}-${project.version}-${stonecutter.current.version}"
+	archivesName = "${project.archives_base_name}-${stonecutter.current.version}"
 }
 
 repositories {
