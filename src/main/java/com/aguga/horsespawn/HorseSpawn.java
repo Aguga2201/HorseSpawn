@@ -26,11 +26,8 @@ import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-//? if >=1.21.10 {
 import net.minecraft.entity.EquipmentSlot;
-//?} else {
-/*import net.minecraft.sound.SoundCategory;
-*///?}
+import net.minecraft.sound.SoundCategory;
 
 import java.util.Random;
 
@@ -67,15 +64,19 @@ public class HorseSpawn implements ModInitializer {
         Entity entity = Registries.ENTITY_TYPE.get(Identifier.of("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld /*? >=1.21.4 {*/, SpawnReason.EVENT /*?}*/);
 
 		if (entity instanceof HorseEntity horseEntity) {
-			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
+			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.1 {*//*, null *//*?}*/);
 			if (CONFIG.overwriteStats) {
                 //? if >=1.21.4 {
 				horseEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
 				horseEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
 				horseEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
-                //?} else {
+                //?} else if >= 1.21.1 {
                 /*horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
                 horseEntity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
+                horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
+                *///?} else {
+                /*horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
+                horseEntity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
                 horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
                 *///?}
 			}
@@ -88,21 +89,27 @@ public class HorseSpawn implements ModInitializer {
             if (CONFIG.enableSaddle) {
                 //? if >=1.21.10 {
                 horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
-                //?} else {
+                //?} else if >= 1.21.1 {
                 /*horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+                *///?} else {
+                /*horseEntity.saddle(SoundCategory.NEUTRAL);
                 *///?}
             }
 		}
 		else if (entity instanceof DonkeyEntity donkeyEntity) {
-			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null);
+			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.1 {*//*, null *//*?}*/);
 			if (CONFIG.overwriteStats) {
                 //? if >=1.21.4 {
 				donkeyEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
 				donkeyEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
 				donkeyEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
-                //?} else {
+                //?} else if >= 1.21.1 {
                 /*donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
                 donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
+                donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
+                *///?} else {
+                /*donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
+                donkeyEntity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
                 donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
                 *///?}
 			}
@@ -118,8 +125,10 @@ public class HorseSpawn implements ModInitializer {
             if (CONFIG.enableSaddle) {
                 //? if >=1.21.10 {
                 donkeyEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
-                 //?} else {
+                 //?} else if >= 1.21.1 {
                 /*donkeyEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+                *///?} else {
+                /*donkeyEntity.saddle(SoundCategory.NEUTRAL);
                 *///?}
             }
 		} else {
