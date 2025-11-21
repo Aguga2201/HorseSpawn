@@ -3,6 +3,8 @@ plugins {
 	id 'maven-publish'
 }
 
+version = project.mod_version
+
 base {
 	archivesName = "${project.archives_base_name}-${project.version}-${stonecutter.current.version}"
 }
@@ -56,9 +58,13 @@ java {
 }
 
 jar {
-	from("LICENSE") {
+    from("LICENSE") {
 		rename { "${it}_${project.base.archivesName.get()}"}
 	}
+}
+
+remapJar {
+    destinationDirectory = rootProject.layout.buildDirectory.dir('libs')
 }
 
 // configure the maven publication
