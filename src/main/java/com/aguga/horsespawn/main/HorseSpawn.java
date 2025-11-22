@@ -8,10 +8,11 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.passive.DonkeyEntity;
-import net.minecraft.entity.passive.HorseEntity;
+import net.minecraft.entity.passive.AbstractDonkeyEntity;
+import net.minecraft.entity.passive.AbstractHorseEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
@@ -52,92 +53,102 @@ public class HorseSpawn implements ModInitializer {
         PlayerEntity player = serverPlayNetworkHandler.getPlayer();
 		ServerWorld serverWorld = (ServerWorld) player.getEntityWorld();
 
-        if (!CONFIG.spawnInCreative && minecraftServer.getDefaultGameMode() == GameMode.CREATIVE) {
+        if (!shouldSpawn(player, minecraftServer.getDefaultGameMode())) {
             return;
+        }
+
+        Entity rawEntity = Registries.ENTITY_TYPE.get(Identifier.of("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld /*? >=1.21.4 {*/, SpawnReason.EVENT /*?}*/);
+        if (!(rawEntity instanceof LivingEntity entity)) {
+            return;
+        }
+
+        applyAttributes(entity);
+        equipSaddle(entity);
+        setTamed(entity);
+        entity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
+        serverWorld.spawnEntity(entity);
+	}
+
+    private boolean shouldSpawn(PlayerEntity player, GameMode gameMode) {
+        if (!CONFIG.spawnInCreative && gameMode == GameMode.CREATIVE) {
+            return false;
         }
 
         IPlayerDataSaver playerDataSaver = (IPlayerDataSaver) player;
         if (CONFIG.spawnOnce && playerDataSaver.getHasSpawnedHorse()) {
-            return;
+            return false;
         }
         playerDataSaver.setHasSpawnedHorse(true);
 
-        Entity entity = Registries.ENTITY_TYPE.get(Identifier.of("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld /*? >=1.21.4 {*/, SpawnReason.EVENT /*?}*/);
+        return true;
+    }
 
-		if (entity instanceof HorseEntity horseEntity) {
-			horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.4 {*//*, null *//*?}*/);
-			if (CONFIG.overwriteStats) {
-                //? if >=1.21.4 {
-				horseEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
-				horseEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
-				horseEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
-                //?} else if >= 1.21.1 {
-                /*horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
-                horseEntity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
-                horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
-                *///?} else {
-                /*horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
-                horseEntity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
-                horseEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
-                *///?}
-			}
+    private void equipSaddle(LivingEntity entity) {
+        if (entity instanceof AbstractHorseEntity horseEntity && CONFIG.enableSaddle) {
+            //? if >=1.21.10 {
+            horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+            //?} else if >= 1.21.1 {
+            /*horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
+            *///?} else {
+            /*horseEntity.saddle(SoundCategory.NEUTRAL);
+             *///?}
+        }
+        if (entity instanceof AbstractDonkeyEntity donkeyEntity && CONFIG.enableChest) {
+            donkeyEntity.setHasChest(true);
+        }
+    }
 
+    private void applyAttributes(LivingEntity entity) {
+        if (entity instanceof AbstractHorseEntity horseEntity) {
+            World world = entity.getEntityWorld();
+            if (world instanceof ServerWorld serverWorld) {
+                horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(horseEntity.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.4 {*//*, null *//*?}*/);
+            }
+        }
+
+        if (!CONFIG.overwriteStats) {
+            return;
+        }
+
+        //? if >=1.21.4 {
+        if (entity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED) != null) {
+            entity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
+        }
+        if (entity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH) != null) {
+            entity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
+        }
+        if (entity.getAttributeInstance(EntityAttributes.MAX_HEALTH) != null) {
+            entity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
+        }
+        //?} else if >= 1.21.1 {
+        /*if (entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED) != null) {
+            entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
+        }
+        if (entity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH) != null) {
+            entity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
+        }
+        if (entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH) != null) {
+            entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
+        }
+        *///?} else {
+        
+        /*if (entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED) != null) {
+            entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
+        }
+        if (entity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH) != null) {
+            entity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
+        }
+        if (entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH) != null) {
+            entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
+        }
+         *///?}
+    }
+
+    private void setTamed(LivingEntity entity) {
+        if (entity instanceof AbstractHorseEntity horseEntity) {
             horseEntity.setTame(true);
-
-			horseEntity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
-			serverWorld.spawnEntity(horseEntity);
-
-            if (CONFIG.enableSaddle) {
-                //? if >=1.21.10 {
-                horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
-                //?} else if >= 1.21.1 {
-                /*horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
-                *///?} else {
-                /*horseEntity.saddle(SoundCategory.NEUTRAL);
-                *///?}
-            }
-		}
-		else if (entity instanceof DonkeyEntity donkeyEntity) {
-			donkeyEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(player.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.4 {*//*, null *//*?}*/);
-			if (CONFIG.overwriteStats) {
-                //? if >=1.21.4 {
-				donkeyEntity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
-				donkeyEntity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
-				donkeyEntity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
-                //?} else if >= 1.21.1 {
-                /*donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
-                donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
-                donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
-                *///?} else {
-                /*donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
-                donkeyEntity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
-                donkeyEntity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
-                *///?}
-			}
-
-			donkeyEntity.setTame(true);
-
-			if (CONFIG.enableChest) {
-                donkeyEntity.setHasChest(true);
-            }
-			donkeyEntity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
-			serverWorld.spawnEntity(donkeyEntity);
-
-            if (CONFIG.enableSaddle) {
-                //? if >=1.21.10 {
-                donkeyEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
-                 //?} else if >= 1.21.1 {
-                /*donkeyEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
-                *///?} else {
-                /*donkeyEntity.saddle(SoundCategory.NEUTRAL);
-                *///?}
-            }
-		} else {
-			entity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
-			serverWorld.spawnEntity(entity);
-		}
-
-	}
+        }
+    }
 
 	public double blocksPerSecToSpeed(double blocksPerSec) {
 		return blocksPerSec / 42.157796;
