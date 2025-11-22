@@ -25,6 +25,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
 import net.minecraft.world.Heightmap;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.ChunkStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.entity.EquipmentSlot;
@@ -187,6 +188,9 @@ public class HorseSpawn implements ModInitializer {
 		int[] selectedOffset = offsets[random.nextInt(offsets.length)];
 		int newX = playerX + selectedOffset[0];
 		int newZ = playerZ + selectedOffset[1];
+        int chunkX = newX >> 4;
+        int chunkZ = newZ >> 4;
+        world.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
 		int topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, newX, newZ);
 		return new Vec3d(newX, topY, newZ);
 	}
