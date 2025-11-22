@@ -1,7 +1,7 @@
 {
 	"schemaVersion": 1,
 	"id": "horse-spawn",
-	"version": "${version}",
+	"version": "${version}+${minecraft}",
 	"name": "Horse Spawn",
 	"description": "Spawns a saddled horse near you when you enter a world for the first time!",
 	"authors": [
@@ -15,8 +15,14 @@
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-          "com.aguga.horsespawn.HorseSpawn"
-		]
+          "com.aguga.horsespawn.main.HorseSpawn"
+		],
+        "client": [
+          "com.aguga.horsespawn.client.HorseSpawnClient"
+        ],
+        "modmenu": [
+            "com.aguga.horsespawn.client.ModMenuIntegration"
+        ]
 	},
 	"mixins": [
 		"horse-spawn.mixins.json"
@@ -28,6 +34,6 @@
 		"fabric-api": "*"
 	},
 	"suggests": {
-		"another-mod": "*"
+		"yet_another_config_lib_v3": ">=${yacl_version}"
 	}
 }

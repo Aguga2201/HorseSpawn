@@ -15,6 +15,15 @@ repositories {
 	// Loom adds the essential maven repositories to download Minecraft and libraries from automatically.
 	// See https://docs.gradle.org/current/userguide/declaring_repositories.html
 	// for more information about repositories.
+
+    maven {
+        name 'Xander Maven'
+        url 'https://maven.isxander.dev/releases'
+    }
+    maven {
+        name = "Terraformers"
+        url = "https://maven.terraformersmc.com/"
+    }
 }
 
 loom {
@@ -32,14 +41,20 @@ dependencies {
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${property('fabric_version')}"
+
+    modCompileOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
+    modRuntimeOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
+    modImplementation "com.terraformersmc:modmenu:${property('modmenu_version')}"
 }
 
 processResources {
 	inputs.property "version", project.version
+    inputs.property "minecraft", stonecutter.current.version
     inputs.property "minecraft_dependency", project.property('minecraft_dependency')
+    inputs.property "yacl_version", project.property('yacl_version')
 
 	filesMatching("fabric.mod.json") {
-        expand version: project.version, minecraft_dependency: project.property('minecraft_dependency')
+        expand version: project.version, minecraft: stonecutter.current.version, minecraft_dependency: project.property('minecraft_dependency'), yacl_version: project.property('yacl_version')
     }
 }
 

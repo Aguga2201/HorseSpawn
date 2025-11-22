@@ -1,6 +1,6 @@
 {
 	"required": true,
-	"package": "com.aguga.horsespawn.mixin",
+	"package": "com.aguga.horsespawn.main.mixin",
 	"compatibilityLevel": "JAVA_17",
 	"mixins": [
       "PlayerDataSaverMixin"

@@ -1,4 +1,4 @@
-package com.aguga.horsespawn.config;
+package com.aguga.horsespawn.main.config;
 
 public class HorseSpawnConfig {
     public enum SpawnType {

@@ -1,8 +1,8 @@
-package com.aguga.horsespawn;
+package com.aguga.horsespawn.main;
 
-import com.aguga.horsespawn.config.ConfigManager;
-import com.aguga.horsespawn.config.HorseSpawnConfig;
-import com.aguga.horsespawn.util.IPlayerDataSaver;
+import com.aguga.horsespawn.main.config.ConfigManager;
+import com.aguga.horsespawn.main.config.HorseSpawnConfig;
+import com.aguga.horsespawn.main.util.IPlayerDataSaver;
 import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -19,6 +19,7 @@ import net.minecraft.registry.Registries;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.GameMode;
@@ -27,7 +28,6 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.sound.SoundCategory;
 
 import java.util.Random;
 

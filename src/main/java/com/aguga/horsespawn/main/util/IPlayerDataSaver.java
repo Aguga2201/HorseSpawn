@@ -1,4 +1,4 @@
-package com.aguga.horsespawn.util;
+package com.aguga.horsespawn.main.util;
 
 public interface IPlayerDataSaver
 {

@@ -1,6 +1,6 @@
-package com.aguga.horsespawn.config;
+package com.aguga.horsespawn.main.config;
 
-import com.aguga.horsespawn.HorseSpawn;
+import com.aguga.horsespawn.main.HorseSpawn;
 
 import java.util.ArrayList;
 import java.util.List;
