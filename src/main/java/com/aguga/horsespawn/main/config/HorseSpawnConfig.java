@@ -1,12 +1,6 @@
 package com.aguga.horsespawn.main.config;
 
 public class HorseSpawnConfig {
-    public enum SpawnType {
-        HORSE,
-        DONKEY,
-        DOLPHIN
-    }
-
     public boolean enableSaddle = true;
     public boolean enableChest = true;
     public boolean spawnInCreative = true;
