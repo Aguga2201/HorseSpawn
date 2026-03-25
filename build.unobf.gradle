@@ -24,6 +24,10 @@ repositories {
         name = "Terraformers"
         url = "https://maven.terraformersmc.com/"
     }
+    maven {
+        name = "Nucleoid"
+        url = "https://maven.nucleoid.xyz/"
+    }
 }
 
 loom {
@@ -41,11 +45,10 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation "net.fabricmc.fabric-api:fabric-api:${property('fabric_version')}"
 
-    if (stonecutter.current.version != "26.1") {
-        compileOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
-        runtimeOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
-        implementation "com.terraformersmc:modmenu:${property('modmenu_version')}"
-    }
+    implementation "com.terraformersmc:modmenu:${property('modmenu_version')}"
+
+    compileOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
+    runtimeOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
 }
 
 processResources {
@@ -79,6 +82,8 @@ jar {
     from("LICENSE") {
         rename { "${it}_${inputs.properties.archivesName}"}
     }
+
+    destinationDirectory = rootProject.layout.buildDirectory.dir('libs')
 }
 
 // configure the maven publication

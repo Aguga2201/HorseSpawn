@@ -1,7 +1,6 @@
 package com.aguga.horsespawn.client;
 
-//? if !=26.1 {
-/*import com.aguga.horsespawn.main.HorseSpawn;
+import com.aguga.horsespawn.main.HorseSpawn;
 import com.aguga.horsespawn.main.config.ConfigLoader;
 import com.aguga.horsespawn.main.config.HorseSpawnConfig;
 import dev.isxander.yacl3.api.*;
@@ -172,4 +171,3 @@ public class YaclConfigScreen {
                 .generateScreen(parent);
     }
 }
-*///?}

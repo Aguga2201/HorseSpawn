@@ -8,28 +8,42 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.Identifier;
+//? if >=26.1 {
+/*import net.minecraft.resources.Identifier;
+ *///?} else {
+import net.minecraft.resources.ResourceLocation;
+//?}
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
+//? if >=1.21.4 {
 import net.minecraft.world.entity.EntitySpawnReason;
+//?}
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+//? if <= 1.21.1 {
+/*import net.minecraft.world.entity.MobSpawnType;
+*///?}
 import net.minecraft.world.entity.ai.attributes.Attributes;
 //? if >=26.1 {
-import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
+/*import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
-//?} else {
-/*import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
+*///?} else {
+import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-*///?}
+//?}
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
 import net.minecraft.world.level.Level;
+//? if >= 1.21.1 {
 import net.minecraft.world.level.chunk.status.ChunkStatus;
+//?} else {
+/*import net.minecraft.world.level.chunk.ChunkStatus;
+*///?}
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.phys.Vec3;
 import org.slf4j.Logger;
@@ -60,7 +74,15 @@ public class HorseSpawn implements ModInitializer {
             return;
         }
 
-        Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld /*? >=1.21.4 {*/, EntitySpawnReason.EVENT /*?}*/);
+        //? if >=26.1 {
+        /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
+        *///?} else if >= 1.21.4 {
+        Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
+        //?} else if >= 1.21.1 {
+        /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld);
+        *///?} else {
+        /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryBuild("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld);
+        *///?}
         if (!(rawEntity instanceof LivingEntity entity)) {
             return;
         }
@@ -89,11 +111,11 @@ public class HorseSpawn implements ModInitializer {
     private void equipSaddle(LivingEntity entity) {
         if (entity instanceof AbstractHorse horseEntity && CONFIG.enableSaddle) {
             //? if >=1.21.10 {
-            horseEntity.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
-            //?} else if >= 1.21.1 {
-            /*horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
-             *///?} else {
-            /*horseEntity.saddle(SoundCategory.NEUTRAL);
+            /*horseEntity.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+            *///?} else if >= 1.21.1 {
+            horseEntity.equipSaddle(new ItemStack(Items.SADDLE), SoundSource.NEUTRAL);
+             //?} else {
+            /*horseEntity.equipSaddle(SoundSource.NEUTRAL);
              *///?}
         }
         if (entity instanceof AbstractChestedHorse donkeyEntity && CONFIG.enableChest) {
@@ -105,7 +127,7 @@ public class HorseSpawn implements ModInitializer {
         if (entity instanceof AbstractHorse horseEntity) {
             Level world = entity.level();
             if (world instanceof ServerLevel serverWorld) {
-                horseEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(horseEntity.blockPosition()), EntitySpawnReason.MOB_SUMMONED, null /*? <=1.20.4 {*//*, null *//*?}*/);
+                horseEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(horseEntity.blockPosition()), /*? >=1.21.4 {*/EntitySpawnReason /*?}*/ /*? <1.21.4 {*//*MobSpawnType *//*?}*/ .MOB_SUMMONED, null /*? <=1.20.4 {*//*, null *//*?}*/);
             }
         }
 
@@ -123,26 +145,15 @@ public class HorseSpawn implements ModInitializer {
         if (entity.getAttribute(Attributes.MAX_HEALTH) != null) {
             entity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(CONFIG.health);
         }
-        //?} else if >= 1.21.1 {
-        /*if (entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED) != null) {
-            entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
+        //?} else {
+        /*if (entity.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
+            entity.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
         }
-        if (entity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH) != null) {
-            entity.getAttributeInstance(EntityAttributes.GENERIC_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
+        if (entity.getAttribute(Attributes.JUMP_STRENGTH) != null) {
+            entity.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
         }
-        if (entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH) != null) {
-            entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
-        }
-        *///?} else {
-
-        /*if (entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED) != null) {
-            entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
-        }
-        if (entity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH) != null) {
-            entity.getAttributeInstance(EntityAttributes.HORSE_JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
-        }
-        if (entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH) != null) {
-            entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
+        if (entity.getAttribute(Attributes.MAX_HEALTH) != null) {
+            entity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(CONFIG.health);
         }
          *///?}
     }
