@@ -1,18 +1,15 @@
 package com.aguga.horsespawn.main.mixin;
 
 import com.aguga.horsespawn.main.util.IPlayerDataSaver;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.nbt.NbtCompound;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueOutput;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-//? if >=1.21.10 {
-import net.minecraft.storage.ReadView;
-import net.minecraft.storage.WriteView;
-//?}
 
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public abstract class PlayerDataSaverMixin implements IPlayerDataSaver
 {
     private boolean hasSpawnedHorse;
@@ -28,14 +25,14 @@ public abstract class PlayerDataSaverMixin implements IPlayerDataSaver
     }
 
     //? if >=1.21.10 {
-    @Inject(method = "writeCustomData", at = @At("HEAD"))
-    private void injectWriteMethod(WriteView view, CallbackInfo ci) {
+    @Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
+    private void injectWriteMethod(ValueOutput view, CallbackInfo ci) {
         view.putBoolean("hasSpawnedHorse", hasSpawnedHorse);
     }
 
-    @Inject(method = "readCustomData", at = @At("HEAD"))
-    private void injectReadMethod(ReadView view, CallbackInfo ci) {
-        hasSpawnedHorse = view.getBoolean("hasSpawnedHorse", false);
+    @Inject(method = "readAdditionalSaveData", at = @At("HEAD"))
+    private void injectReadMethod(ValueInput view, CallbackInfo ci) {
+        hasSpawnedHorse = view.getBooleanOr("hasSpawnedHorse", false);
     }
     //?} else {
     /*@Inject(method = "writeCustomDataToNbt", at = @At("HEAD"))

@@ -7,30 +7,33 @@ import net.fabricmc.api.ModInitializer;
 
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
-import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.passive.AbstractDonkeyEntity;
-import net.minecraft.entity.passive.AbstractHorseEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.registry.Registries;
+import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.server.network.ServerPlayNetworkHandler;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.GameMode;
-import net.minecraft.world.Heightmap;
-import net.minecraft.world.World;
-import net.minecraft.world.chunk.ChunkStatus;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntitySpawnReason;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.attributes.Attributes;
+//? if >=26.1 {
+import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
+//?} else {
+/*import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
+import net.minecraft.world.entity.animal.horse.AbstractHorse;
+*///?}
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.level.GameType;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.chunk.status.ChunkStatus;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.minecraft.world.phys.Vec3;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import net.minecraft.entity.EquipmentSlot;
-
 import java.util.Random;
 
 public class HorseSpawn implements ModInitializer {
@@ -42,22 +45,22 @@ public class HorseSpawn implements ModInitializer {
             newConf -> CONFIG = newConf
     );
 
-	@Override
-	public void onInitialize() {
-		LOGGER.info("Successfully initialized Horse Spawn!");
-		ServerPlayConnectionEvents.JOIN.register(this::spawnHorseForPlayer);
+    @Override
+    public void onInitialize() {
+        LOGGER.info("Successfully initialized Horse Spawn!");
+        ServerPlayConnectionEvents.JOIN.register(this::spawnHorseForPlayer);
 
-	}
+    }
 
-	private void spawnHorseForPlayer(ServerPlayNetworkHandler serverPlayNetworkHandler, PacketSender packetSender, MinecraftServer minecraftServer) {
-        PlayerEntity player = serverPlayNetworkHandler.getPlayer();
-		ServerWorld serverWorld = (ServerWorld) player.getEntityWorld();
+    private void spawnHorseForPlayer(ServerGamePacketListenerImpl serverPlayNetworkHandler, PacketSender packetSender, MinecraftServer minecraftServer) {
+        Player player = serverPlayNetworkHandler.getPlayer();
+        ServerLevel serverWorld = (ServerLevel) player.level();
 
-        if (!shouldSpawn(player, minecraftServer.getDefaultGameMode())) {
+        if (!shouldSpawn(player, minecraftServer.getDefaultGameType())) {
             return;
         }
 
-        Entity rawEntity = Registries.ENTITY_TYPE.get(Identifier.of("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld /*? >=1.21.4 {*/, SpawnReason.EVENT /*?}*/);
+        Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld /*? >=1.21.4 {*/, EntitySpawnReason.EVENT /*?}*/);
         if (!(rawEntity instanceof LivingEntity entity)) {
             return;
         }
@@ -65,12 +68,12 @@ public class HorseSpawn implements ModInitializer {
         applyAttributes(entity);
         equipSaddle(entity);
         setTamed(entity);
-        entity.setPosition(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
-        serverWorld.spawnEntity(entity);
-	}
+        entity.setPos(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
+        serverWorld.addFreshEntity(entity);
+    }
 
-    private boolean shouldSpawn(PlayerEntity player, GameMode gameMode) {
-        if (!CONFIG.spawnInCreative && gameMode == GameMode.CREATIVE) {
+    private boolean shouldSpawn(Player player, GameType gameMode) {
+        if (!CONFIG.spawnInCreative && gameMode == GameType.CREATIVE) {
             return false;
         }
 
@@ -84,25 +87,25 @@ public class HorseSpawn implements ModInitializer {
     }
 
     private void equipSaddle(LivingEntity entity) {
-        if (entity instanceof AbstractHorseEntity horseEntity && CONFIG.enableSaddle) {
+        if (entity instanceof AbstractHorse horseEntity && CONFIG.enableSaddle) {
             //? if >=1.21.10 {
-            horseEntity.equipStack(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+            horseEntity.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
             //?} else if >= 1.21.1 {
             /*horseEntity.saddle(new ItemStack(Items.SADDLE), SoundCategory.NEUTRAL);
-            *///?} else {
+             *///?} else {
             /*horseEntity.saddle(SoundCategory.NEUTRAL);
              *///?}
         }
-        if (entity instanceof AbstractDonkeyEntity donkeyEntity && CONFIG.enableChest) {
-            donkeyEntity.setHasChest(true);
+        if (entity instanceof AbstractChestedHorse donkeyEntity && CONFIG.enableChest) {
+            donkeyEntity.setChest(true);
         }
     }
 
     private void applyAttributes(LivingEntity entity) {
-        if (entity instanceof AbstractHorseEntity horseEntity) {
-            World world = entity.getEntityWorld();
-            if (world instanceof ServerWorld serverWorld) {
-                horseEntity.initialize(serverWorld, serverWorld.getLocalDifficulty(horseEntity.getBlockPos()), SpawnReason.MOB_SUMMONED, null /*? <=1.20.4 {*//*, null *//*?}*/);
+        if (entity instanceof AbstractHorse horseEntity) {
+            Level world = entity.level();
+            if (world instanceof ServerLevel serverWorld) {
+                horseEntity.finalizeSpawn(serverWorld, serverWorld.getCurrentDifficultyAt(horseEntity.blockPosition()), EntitySpawnReason.MOB_SUMMONED, null /*? <=1.20.4 {*//*, null *//*?}*/);
             }
         }
 
@@ -111,14 +114,14 @@ public class HorseSpawn implements ModInitializer {
         }
 
         //? if >=1.21.4 {
-        if (entity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED) != null) {
-            entity.getAttributeInstance(EntityAttributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
+        if (entity.getAttribute(Attributes.MOVEMENT_SPEED) != null) {
+            entity.getAttribute(Attributes.MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
         }
-        if (entity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH) != null) {
-            entity.getAttributeInstance(EntityAttributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
+        if (entity.getAttribute(Attributes.JUMP_STRENGTH) != null) {
+            entity.getAttribute(Attributes.JUMP_STRENGTH).setBaseValue(jumpHeightToJumpStrength(CONFIG.jump));
         }
-        if (entity.getAttributeInstance(EntityAttributes.MAX_HEALTH) != null) {
-            entity.getAttributeInstance(EntityAttributes.MAX_HEALTH).setBaseValue(CONFIG.health);
+        if (entity.getAttribute(Attributes.MAX_HEALTH) != null) {
+            entity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(CONFIG.health);
         }
         //?} else if >= 1.21.1 {
         /*if (entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED) != null) {
@@ -131,7 +134,7 @@ public class HorseSpawn implements ModInitializer {
             entity.getAttributeInstance(EntityAttributes.GENERIC_MAX_HEALTH).setBaseValue(CONFIG.health);
         }
         *///?} else {
-        
+
         /*if (entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED) != null) {
             entity.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(blocksPerSecToSpeed(CONFIG.speed));
         }
@@ -145,23 +148,23 @@ public class HorseSpawn implements ModInitializer {
     }
 
     private void setTamed(LivingEntity entity) {
-        if (entity instanceof AbstractHorseEntity horseEntity) {
-            horseEntity.setTame(true);
+        if (entity instanceof AbstractHorse horseEntity) {
+            horseEntity.setTamed(true);
         }
     }
 
-	public double blocksPerSecToSpeed(double blocksPerSec) {
-		return blocksPerSec / 42.157796;
-	}
+    public double blocksPerSecToSpeed(double blocksPerSec) {
+        return blocksPerSec / 42.157796;
+    }
 
-	public double jumpStrengthToJumpHeight(double strength) {
-		double height = 0;
-		while(strength > 0) {
-			height += strength;
-			strength = (strength - .08) * .98 * .98;
-		}
-		return height;
-	}
+    public double jumpStrengthToJumpHeight(double strength) {
+        double height = 0;
+        while(strength > 0) {
+            height += strength;
+            strength = (strength - .08) * .98 * .98;
+        }
+        return height;
+    }
 
     public double jumpHeightToJumpStrength(double height) {
         double tol = 0.0001;
@@ -190,19 +193,19 @@ public class HorseSpawn implements ModInitializer {
         return (low + high) / 2.0;
     }
 
-	public Vec3d getEntityCoordinates(int playerX, int playerZ, World world) {
-		Random random = new Random();
-		int[][] offsets = {
-				{8, 0}, {6, 6}, {0, 8}, {-6, 6},
-				{-8, 0}, {-6, -6}, {0, -8}, {6, -6}
-		};
-		int[] selectedOffset = offsets[random.nextInt(offsets.length)];
-		int newX = playerX + selectedOffset[0];
-		int newZ = playerZ + selectedOffset[1];
+    public Vec3 getEntityCoordinates(int playerX, int playerZ, Level world) {
+        Random random = new Random();
+        int[][] offsets = {
+                {8, 0}, {6, 6}, {0, 8}, {-6, 6},
+                {-8, 0}, {-6, -6}, {0, -8}, {6, -6}
+        };
+        int[] selectedOffset = offsets[random.nextInt(offsets.length)];
+        int newX = playerX + selectedOffset[0];
+        int newZ = playerZ + selectedOffset[1];
         int chunkX = newX >> 4;
         int chunkZ = newZ >> 4;
         world.getChunk(chunkX, chunkZ, ChunkStatus.FULL, true);
-		int topY = world.getTopY(Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, newX, newZ);
-		return new Vec3d(newX, topY, newZ);
-	}
+        int topY = world.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, newX, newZ);
+        return new Vec3(newX, topY, newZ);
+    }
 }

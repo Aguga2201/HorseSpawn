@@ -41,9 +41,11 @@ dependencies {
 	// Fabric API. This is technically optional, but you probably want it anyway.
 	implementation "net.fabricmc.fabric-api:fabric-api:${property('fabric_version')}"
 
-    compileOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
-    runtimeOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
-    implementation "com.terraformersmc:modmenu:${property('modmenu_version')}"
+    if (stonecutter.current.version != "26.1") {
+        compileOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
+        runtimeOnly "dev.isxander:yet-another-config-lib:${property('yacl_version')}"
+        implementation "com.terraformersmc:modmenu:${property('modmenu_version')}"
+    }
 }
 
 processResources {

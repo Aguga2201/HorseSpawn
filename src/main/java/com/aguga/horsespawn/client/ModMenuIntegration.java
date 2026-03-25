@@ -1,6 +1,7 @@
 package com.aguga.horsespawn.client;
 
-import com.terraformersmc.modmenu.api.ConfigScreenFactory;
+//? if !=26.1 {
+/*import com.terraformersmc.modmenu.api.ConfigScreenFactory;
 import com.terraformersmc.modmenu.api.ModMenuApi;
 import net.fabricmc.loader.api.FabricLoader;
 
@@ -13,3 +14,4 @@ public class ModMenuIntegration implements ModMenuApi {
         return YaclConfigScreen::create;
     }
 }
+*///?}
