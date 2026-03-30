@@ -5,14 +5,15 @@ import com.aguga.horsespawn.main.config.HorseSpawnConfig;
 import com.aguga.horsespawn.main.util.IPlayerDataSaver;
 import net.fabricmc.api.ModInitializer;
 
+import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 //? if >=26.1 {
-/*import net.minecraft.resources.Identifier;
- *///?} else {
-import net.minecraft.resources.ResourceLocation;
-//?}
+import net.minecraft.resources.Identifier;
+ //?} else {
+/*import net.minecraft.resources.ResourceLocation;
+*///?}
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
@@ -28,12 +29,12 @@ import net.minecraft.world.entity.LivingEntity;
 *///?}
 import net.minecraft.world.entity.ai.attributes.Attributes;
 //? if >=26.1 {
-/*import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
+import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.equine.AbstractHorse;
-*///?} else {
-import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
+//?} else {
+/*import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
 import net.minecraft.world.entity.animal.horse.AbstractHorse;
-//?}
+*///?}
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
@@ -64,6 +65,12 @@ public class HorseSpawn implements ModInitializer {
         LOGGER.info("Successfully initialized Horse Spawn!");
         ServerPlayConnectionEvents.JOIN.register(this::spawnHorseForPlayer);
 
+        ServerPlayerEvents.AFTER_RESPAWN.register((oldPlayer, newPlayer, alive) -> {
+            IPlayerDataSaver oldData = (IPlayerDataSaver) oldPlayer;
+            IPlayerDataSaver newData = (IPlayerDataSaver) newPlayer;
+
+            newData.setHasSpawnedHorse(oldData.getHasSpawnedHorse());
+        });
     }
 
     private void spawnHorseForPlayer(ServerGamePacketListenerImpl serverPlayNetworkHandler, PacketSender packetSender, MinecraftServer minecraftServer) {
@@ -75,10 +82,10 @@ public class HorseSpawn implements ModInitializer {
         }
 
         //? if >=26.1 {
-        /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
-        *///?} else if >= 1.21.4 {
-        Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
-        //?} else if >= 1.21.1 {
+        Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
+        //?} else if >= 1.21.4 {
+        /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
+        *///?} else if >= 1.21.1 {
         /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld);
         *///?} else {
         /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryBuild("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld);
@@ -111,10 +118,10 @@ public class HorseSpawn implements ModInitializer {
     private void equipSaddle(LivingEntity entity) {
         if (entity instanceof AbstractHorse horseEntity && CONFIG.enableSaddle) {
             //? if >=1.21.10 {
-            /*horseEntity.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
-            *///?} else if >= 1.21.1 {
-            horseEntity.equipSaddle(new ItemStack(Items.SADDLE), SoundSource.NEUTRAL);
-             //?} else {
+            horseEntity.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+            //?} else if >= 1.21.1 {
+            /*horseEntity.equipSaddle(new ItemStack(Items.SADDLE), SoundSource.NEUTRAL);
+             *///?} else {
             /*horseEntity.equipSaddle(SoundSource.NEUTRAL);
              *///?}
         }
@@ -164,11 +171,11 @@ public class HorseSpawn implements ModInitializer {
         }
     }
 
-    public double blocksPerSecToSpeed(double blocksPerSec) {
+    private double blocksPerSecToSpeed(double blocksPerSec) {
         return blocksPerSec / 42.157796;
     }
 
-    public double jumpStrengthToJumpHeight(double strength) {
+    private double jumpStrengthToJumpHeight(double strength) {
         double height = 0;
         while(strength > 0) {
             height += strength;
@@ -177,7 +184,7 @@ public class HorseSpawn implements ModInitializer {
         return height;
     }
 
-    public double jumpHeightToJumpStrength(double height) {
+    private double jumpHeightToJumpStrength(double height) {
         double tol = 0.0001;
         double low = 0.0;
         double high = 1.0;
@@ -204,7 +211,7 @@ public class HorseSpawn implements ModInitializer {
         return (low + high) / 2.0;
     }
 
-    public Vec3 getEntityCoordinates(int playerX, int playerZ, Level world) {
+    private Vec3 getEntityCoordinates(int playerX, int playerZ, Level world) {
         Random random = new Random();
         int[][] offsets = {
                 {8, 0}, {6, 6}, {0, 8}, {-6, 6},

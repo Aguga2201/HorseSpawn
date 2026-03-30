@@ -3,11 +3,11 @@ package com.aguga.horsespawn.main.mixin;
 import com.aguga.horsespawn.main.util.IPlayerDataSaver;
 import net.minecraft.world.entity.player.Player;
 //? if >=1.21.10 {
-/*import net.minecraft.world.level.storage.ValueInput;
+import net.minecraft.world.level.storage.ValueInput;
 import net.minecraft.world.level.storage.ValueOutput;
-*///?} else {
-import net.minecraft.nbt.CompoundTag;
-//?}
+//?} else {
+/*import net.minecraft.nbt.CompoundTag;
+*///?}
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -29,7 +29,7 @@ public void setHasSpawnedHorse(boolean value) {
 }
 
 //? if >=1.21.10 {
-/*@Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
+@Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
 private void injectWriteMethod(ValueOutput view, CallbackInfo ci) {
     view.putBoolean("hasSpawnedHorse", hasSpawnedHorse);
 }
@@ -38,8 +38,8 @@ private void injectWriteMethod(ValueOutput view, CallbackInfo ci) {
 private void injectReadMethod(ValueInput view, CallbackInfo ci) {
     hasSpawnedHorse = view.getBooleanOr("hasSpawnedHorse", false);
 }
-*///?} else {
-    @Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
+//?} else {
+    /*@Inject(method = "addAdditionalSaveData", at = @At("HEAD"))
     private void injectWriteMethod(CompoundTag nbt, CallbackInfo ci) {
         nbt.putBoolean("hasSpawnedHorse", hasSpawnedHorse);
     }
@@ -48,5 +48,5 @@ private void injectReadMethod(ValueInput view, CallbackInfo ci) {
     private void injectReadMethod(CompoundTag nbt, CallbackInfo ci) {
         hasSpawnedHorse = nbt.getBoolean("hasSpawnedHorse");
     }
-    //?}
+    *///?}
 }
