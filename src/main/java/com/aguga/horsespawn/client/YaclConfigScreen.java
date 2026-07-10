@@ -54,6 +54,17 @@ public class YaclConfigScreen {
                                         .controller(TickBoxControllerBuilder::create)
                                         .build())
 
+                                .option(Option.<HorseSpawnConfig.HorseArmorConfig>createBuilder()
+                                        .name(Component.literal("Companion Mob Armor"))
+                                        .description(OptionDescription.of(Component.literal("Spawn the companion with an armor piece")))
+                                        .binding(
+                                                HorseSpawnConfig.HorseArmorConfig.NONE,
+                                                () -> config.armor,
+                                                val -> config.armor = val
+                                        )
+                                        .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseArmorConfig.class))
+                                        .build())
+
                                 .build())
 
                         // Spawn Behavior Group

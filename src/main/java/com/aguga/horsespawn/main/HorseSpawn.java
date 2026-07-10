@@ -34,6 +34,7 @@ import net.minecraft.world.entity.animal.equine.*;
 /*import net.minecraft.world.entity.animal.horse.*;
 *///?}
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.GameType;
@@ -115,14 +116,26 @@ public class HorseSpawn implements ModInitializer {
     }
 
     private void setEquipment(LivingEntity entity) {
-        if (entity instanceof AbstractHorse horseEntity && CONFIG.enableSaddle) {
-            //? if >=1.21.10 {
-            horseEntity.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
-            //?} else if >= 1.21.1 {
-            /*horseEntity.equipSaddle(new ItemStack(Items.SADDLE), SoundSource.NEUTRAL);
-             *///?} else {
-            /*horseEntity.equipSaddle(SoundSource.NEUTRAL);
-             *///?}
+        if (entity instanceof AbstractHorse horseEntity) {
+            if (CONFIG.enableSaddle) {
+                //? if >=1.21.10 {
+                horseEntity.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
+                //?} else if >= 1.21.1 {
+                /*horseEntity.equipSaddle(new ItemStack(Items.SADDLE), SoundSource.NEUTRAL);
+                 *///?} else {
+                /*horseEntity.equipSaddle(SoundSource.NEUTRAL);
+                 *///?}
+            }
+        }
+        if (entity instanceof Horse horseEntity) {
+            Item armorItem = CONFIG.armor.toItem();
+            if (armorItem != null) {
+                //? if >= 1.21.1 {
+                horseEntity.setItemSlot(EquipmentSlot.BODY, new ItemStack(armorItem));
+                //?} else {
+                /*horseEntity.inventory.setItem(1, new ItemStack(armorItem));
+                 *///?}
+            }
         }
         if (entity instanceof AbstractChestedHorse donkeyEntity && CONFIG.enableChest) {
             donkeyEntity.setChest(true);
