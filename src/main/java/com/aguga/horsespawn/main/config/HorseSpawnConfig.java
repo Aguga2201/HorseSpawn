@@ -10,4 +10,14 @@ public class HorseSpawnConfig {
     public float jump = 3.0f;
     public int health = 20;
     public String spawnType = "HORSE";
+    public HorseMarkingsConfig markings = HorseMarkingsConfig.DEFAULT;
+    public HorseVariantConfig variant = HorseVariantConfig.DEFAULT;
+
+    public enum HorseMarkingsConfig {
+        DEFAULT, NONE, WHITE, WHITE_FIELD, WHITE_DOTS, BLACK_DOTS
+    }
+
+    public enum HorseVariantConfig {
+        DEFAULT, WHITE, CREAMY, CHESTNUT, BROWN, BLACK, GRAY, DARK_BROWN
+    }
 }

@@ -7,6 +7,13 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
+//? if >=26.1 {
+import net.minecraft.world.entity.animal.equine.*;
+//?} else {
+/*import net.minecraft.world.entity.animal.horse.*;
+*///?}
+
+import java.util.List;
 
 public class YaclConfigScreen {
     public static Screen create(Screen parent) {
@@ -14,8 +21,10 @@ public class YaclConfigScreen {
 
         return YetAnotherConfigLib.createBuilder()
                 .title(Component.literal("Horse Spawn Config"))
+
+                // General Category
                 .category(ConfigCategory.createBuilder()
-                        .name(Component.literal("General Settings"))
+                        .name(Component.literal("General"))
                         .tooltip(Component.literal("General spawn configuration"))
 
                         // Equipment Options Group
@@ -90,7 +99,7 @@ public class YaclConfigScreen {
                                                 val -> config.spawnType = val.toUpperCase()
                                         )
                                         .controller(opt -> CyclingListControllerBuilder.create(opt)
-                                                .values(java.util.List.of("HORSE", "DONKEY", "MULE"))
+                                                .values(List.of("HORSE", "DONKEY", "MULE"))
                                                 .formatValue(val -> Component.literal(val)))
                                         .build())
 
@@ -98,6 +107,7 @@ public class YaclConfigScreen {
 
                         .build())
 
+                // Stats Category
                 .category(ConfigCategory.createBuilder()
                         .name(Component.literal("Stats"))
                         .tooltip(Component.literal("Configure companion statistics"))
@@ -159,6 +169,35 @@ public class YaclConfigScreen {
                                                 .formatValue(val -> Component.literal(String.format("%d HP (%.1f ♥)", val, val / 2.0f))))
                                         .build())
 
+                                .build())
+
+                        .build())
+
+                // Visuals Category
+                .category(ConfigCategory.createBuilder()
+                        .name(Component.literal("Visuals"))
+                        .tooltip(Component.literal("Configure Companion Visuals"))
+
+                        .option(Option.<HorseSpawnConfig.HorseVariantConfig>createBuilder()
+                                .name(Component.literal("Horse Variant"))
+                                .description(OptionDescription.of(Component.literal("Visual Horse Variant")))
+                                .binding(
+                                        HorseSpawnConfig.HorseVariantConfig.DEFAULT,
+                                        () -> config.variant,
+                                        val -> config.variant = val
+                                )
+                                .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseVariantConfig.class))
+                                .build())
+
+                        .option(Option.<HorseSpawnConfig.HorseMarkingsConfig>createBuilder()
+                                .name(Component.literal("Horse Markings"))
+                                .description(OptionDescription.of(Component.literal("Visual Horse Markings")))
+                                .binding(
+                                        HorseSpawnConfig.HorseMarkingsConfig.DEFAULT,
+                                        () -> config.markings,
+                                        val -> config.markings = val
+                                )
+                                .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseMarkingsConfig.class))
                                 .build())
 
                         .build())

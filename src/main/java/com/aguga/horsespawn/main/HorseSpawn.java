@@ -29,11 +29,9 @@ import net.minecraft.world.entity.LivingEntity;
 *///?}
 import net.minecraft.world.entity.ai.attributes.Attributes;
 //? if >=26.1 {
-import net.minecraft.world.entity.animal.equine.AbstractChestedHorse;
-import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.animal.equine.*;
 //?} else {
-/*import net.minecraft.world.entity.animal.horse.AbstractChestedHorse;
-import net.minecraft.world.entity.animal.horse.AbstractHorse;
+/*import net.minecraft.world.entity.animal.horse.*;
 *///?}
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -94,8 +92,9 @@ public class HorseSpawn implements ModInitializer {
             return;
         }
 
-        applyAttributes(entity);
-        equipSaddle(entity);
+        setAttributes(entity);
+        setEquipment(entity);
+        setVisuals(entity);
         setTamed(entity);
         entity.setPos(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
         serverWorld.addFreshEntity(entity);
@@ -115,7 +114,7 @@ public class HorseSpawn implements ModInitializer {
         return true;
     }
 
-    private void equipSaddle(LivingEntity entity) {
+    private void setEquipment(LivingEntity entity) {
         if (entity instanceof AbstractHorse horseEntity && CONFIG.enableSaddle) {
             //? if >=1.21.10 {
             horseEntity.setItemSlot(EquipmentSlot.SADDLE, new ItemStack(Items.SADDLE));
@@ -130,7 +129,7 @@ public class HorseSpawn implements ModInitializer {
         }
     }
 
-    private void applyAttributes(LivingEntity entity) {
+    private void setAttributes(LivingEntity entity) {
         if (entity instanceof AbstractHorse horseEntity) {
             Level world = entity.level();
             if (world instanceof ServerLevel serverWorld) {
@@ -163,6 +162,22 @@ public class HorseSpawn implements ModInitializer {
             entity.getAttribute(Attributes.MAX_HEALTH).setBaseValue(CONFIG.health);
         }
          *///?}
+    }
+
+    private void setVisuals(LivingEntity entity) {
+        if (entity instanceof Horse horseEntity) {
+            Variant variant = horseEntity.getVariant();
+            if (CONFIG.variant != HorseSpawnConfig.HorseVariantConfig.DEFAULT) {
+                variant = Variant.valueOf(CONFIG.variant.name());
+            }
+
+            Markings markings = horseEntity.getMarkings();
+            if (CONFIG.markings != HorseSpawnConfig.HorseMarkingsConfig.DEFAULT) {
+                markings = Markings.valueOf(CONFIG.markings.name());
+            }
+
+            horseEntity.setVariantAndMarkings(variant, markings);
+        }
     }
 
     private void setTamed(LivingEntity entity) {

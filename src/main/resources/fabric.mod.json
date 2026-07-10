@@ -27,6 +27,7 @@
 	"mixins": [
 		"horse-spawn.mixins.json"
 	],
+	"accessWidener": "accesswideners/${aw_file}",
 	"depends": {
 		"fabricloader": ">=0.16.0",
 		"minecraft": "${minecraft_dependency}",

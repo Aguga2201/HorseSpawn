@@ -35,6 +35,7 @@ loom {
         ideConfigGenerated true // Run configurations are not created for subprojects by default
         runDir "../../run" // Use a shared run folder and create separate worlds
     }
+    accessWidenerPath = rootProject.file("src/main/resources/accesswideners/26.1.accesswidener")
 }
 
 dependencies {
@@ -58,7 +59,13 @@ processResources {
     inputs.property "yacl_version", project.property('yacl_version')
 
 	filesMatching("fabric.mod.json") {
-        expand version: project.version, minecraft: stonecutter.current.version, minecraft_dependency: project.property('minecraft_dependency'), yacl_version: project.property('yacl_version')
+        expand([
+                version: project.version,
+                minecraft: stonecutter.current.version,
+                minecraft_dependency: project.property('minecraft_dependency'),
+                yacl_version: project.property('yacl_version'),
+                aw_file: "26.1.accesswidener",
+        ])
     }
 }
 
