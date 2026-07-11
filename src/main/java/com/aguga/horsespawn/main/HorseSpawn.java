@@ -137,6 +137,16 @@ public class HorseSpawn implements ModInitializer {
                  *///?}
             }
         }
+        if (entity instanceof Llama llamaEntity) {
+            Item carpetItem = CONFIG.carpet.toItem();
+            if(carpetItem != null) {
+                //? if >= 1.21.1 {
+                llamaEntity.setItemSlot(EquipmentSlot.BODY, new ItemStack(carpetItem));
+                //?} else {
+                /*llamaEntity.inventory.setItem(1, new ItemStack(carpetItem));
+                 *///?}
+            }
+        }
         if (entity instanceof AbstractChestedHorse chestedEntity && CONFIG.enableChest) {
             chestedEntity.setChest(true);
             chestedEntity.createInventory();

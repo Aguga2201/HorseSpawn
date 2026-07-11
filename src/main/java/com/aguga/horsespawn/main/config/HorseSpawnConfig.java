@@ -16,6 +16,7 @@ public class HorseSpawnConfig {
     public HorseMarkingsConfig markings = HorseMarkingsConfig.DEFAULT;
     public HorseVariantConfig variant = HorseVariantConfig.DEFAULT;
     public HorseArmorConfig armor = HorseArmorConfig.NONE;
+    public LlamaCarpetConfig carpet = LlamaCarpetConfig.NONE;
     public boolean defaultName = true;
     public String customName = "";
 
@@ -50,6 +51,32 @@ public class HorseSpawnConfig {
                 //? if >=1.21.11 {
                 case NETHERITE -> Items.NETHERITE_HORSE_ARMOR;
                 //?}
+                default -> null;
+            };
+        }
+    }
+
+    public enum LlamaCarpetConfig {
+        NONE, WHITE, LIGHT_GRAY, GRAY, BLACK, BROWN, RED, ORANGE, YELLOW, LIME, GREEN, CYAN, LIGHT_BLUE, BLUE, PURPLE, MAGENTA, PINK;
+
+        public Item toItem() {
+            return switch (this) {
+                case WHITE -> Items.WHITE_CARPET;
+                case LIGHT_GRAY -> Items.LIGHT_GRAY_CARPET;
+                case GRAY -> Items.GRAY_CARPET;
+                case BLACK -> Items.BLACK_CARPET;
+                case BROWN -> Items.BROWN_CARPET;
+                case RED -> Items.RED_CARPET;
+                case ORANGE -> Items.ORANGE_CARPET;
+                case YELLOW -> Items.YELLOW_CARPET;
+                case LIME -> Items.LIME_CARPET;
+                case GREEN -> Items.GREEN_CARPET;
+                case CYAN -> Items.CYAN_CARPET;
+                case LIGHT_BLUE -> Items.LIGHT_BLUE_CARPET;
+                case BLUE -> Items.BLUE_CARPET;
+                case PURPLE -> Items.PURPLE_CARPET;
+                case MAGENTA -> Items.MAGENTA_CARPET;
+                case PINK -> Items.PINK_CARPET;
                 default -> null;
             };
         }

@@ -105,7 +105,7 @@ public class YaclConfigScreen {
                                                 val -> config.spawnType = val.toUpperCase()
                                         )
                                         .controller(opt -> CyclingListControllerBuilder.create(opt)
-                                                .values(List.of("HORSE", "DONKEY", "MULE"))
+                                                .values(List.of("HORSE", "DONKEY", "MULE", "LLAMA"))
                                                 .formatValue(Component::literal))
                                         .build())
 
@@ -239,6 +239,23 @@ public class YaclConfigScreen {
                                                 val -> config.markings = val
                                         )
                                         .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseMarkingsConfig.class))
+                                        .build())
+
+                                .build())
+
+                        .group(OptionGroup.createBuilder()
+                                .name(Component.literal("Llama Visuals"))
+                                .description(OptionDescription.of(Component.literal("Visuals specific to Llamas")))
+
+                                .option(Option.<HorseSpawnConfig.LlamaCarpetConfig>createBuilder()
+                                        .name(Component.literal("Llama Carpet"))
+                                        .description(OptionDescription.of(Component.literal("Visual Horse Markings")))
+                                        .binding(
+                                                HorseSpawnConfig.LlamaCarpetConfig.NONE,
+                                                () -> config.carpet,
+                                                val -> config.carpet = val
+                                        )
+                                        .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.LlamaCarpetConfig.class))
                                         .build())
 
                                 .build())
