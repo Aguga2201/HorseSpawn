@@ -195,9 +195,9 @@ public class HorseSpawn implements ModInitializer {
 
         if (CONFIG.defaultName && CONFIG.customName.isEmpty()) {
             //? if >= 26.1 {
-            entity.setCustomName(Component.literal(player.getPlainTextName() + "'s Horse"));
+            entity.setCustomName(Component.literal(player.getPlainTextName() + "'s " + entity.getName().getString()));
             //?} else {
-            /*entity.setCustomName(Component.literal(player.getDisplayName().getString() + "'s Horse"));
+            /*entity.setCustomName(Component.literal(player.getDisplayName().getString() + "'s " + entity.getName().getString()));
             *///?}
         }
         if (!CONFIG.customName.isEmpty()) {
