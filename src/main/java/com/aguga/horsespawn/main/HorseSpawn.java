@@ -142,7 +142,7 @@ public class HorseSpawn implements ModInitializer {
             }
         }
         if (entity instanceof Llama llamaEntity) {
-            Item carpetItem = CONFIG.carpet.toItem();
+            Item carpetItem = CONFIG.llamaCarpet.toItem();
             if(carpetItem != null) {
                 //? if >= 1.21.1 {
                 llamaEntity.setItemSlot(EquipmentSlot.BODY, new ItemStack(carpetItem));
@@ -195,16 +195,25 @@ public class HorseSpawn implements ModInitializer {
     private void setVisuals(LivingEntity entity, Player player) {
         if (entity instanceof Horse horseEntity) {
             Variant variant = horseEntity.getVariant();
-            if (CONFIG.variant != HorseSpawnConfig.HorseVariantConfig.DEFAULT) {
-                variant = Variant.valueOf(CONFIG.variant.name());
+            if (CONFIG.horseVariant != HorseSpawnConfig.HorseVariantConfig.DEFAULT) {
+                variant = Variant.valueOf(CONFIG.horseVariant.name());
             }
 
             Markings markings = horseEntity.getMarkings();
-            if (CONFIG.markings != HorseSpawnConfig.HorseMarkingsConfig.DEFAULT) {
-                markings = Markings.valueOf(CONFIG.markings.name());
+            if (CONFIG.horseMarkings != HorseSpawnConfig.HorseMarkingsConfig.DEFAULT) {
+                markings = Markings.valueOf(CONFIG.horseMarkings.name());
             }
 
             horseEntity.setVariantAndMarkings(variant, markings);
+        }
+
+        if (entity instanceof Llama llamaEntity) {
+            Llama.Variant variant = llamaEntity.getVariant();
+            if (CONFIG.llamaVariant != HorseSpawnConfig.LlamaVariantConfig.DEFAULT) {
+                variant = Llama.Variant.valueOf(CONFIG.llamaVariant.name());
+            }
+
+            llamaEntity.setVariant(variant);
         }
 
         if (CONFIG.defaultName && CONFIG.customName.isEmpty()) {

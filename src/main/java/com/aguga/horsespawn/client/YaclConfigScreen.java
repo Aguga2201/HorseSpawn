@@ -235,8 +235,8 @@ public class YaclConfigScreen {
                                         .description(OptionDescription.of(Component.literal("Visual Horse Variant")))
                                         .binding(
                                                 HorseSpawnConfig.HorseVariantConfig.DEFAULT,
-                                                () -> config.variant,
-                                                val -> config.variant = val
+                                                () -> config.horseVariant,
+                                                val -> config.horseVariant = val
                                         )
                                         .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseVariantConfig.class))
                                         .build())
@@ -246,8 +246,8 @@ public class YaclConfigScreen {
                                         .description(OptionDescription.of(Component.literal("Visual Horse Markings")))
                                         .binding(
                                                 HorseSpawnConfig.HorseMarkingsConfig.DEFAULT,
-                                                () -> config.markings,
-                                                val -> config.markings = val
+                                                () -> config.horseMarkings,
+                                                val -> config.horseMarkings = val
                                         )
                                         .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseMarkingsConfig.class))
                                         .build())
@@ -258,13 +258,24 @@ public class YaclConfigScreen {
                                 .name(Component.literal("Llama Visuals"))
                                 .description(OptionDescription.of(Component.literal("Visuals specific to Llamas")))
 
+                                .option(Option.<HorseSpawnConfig.LlamaVariantConfig>createBuilder()
+                                        .name(Component.literal("Llama Variant"))
+                                        .description(OptionDescription.of(Component.literal("Visual Llama Variant")))
+                                        .binding(
+                                                HorseSpawnConfig.LlamaVariantConfig.DEFAULT,
+                                                () -> config.llamaVariant,
+                                                val -> config.llamaVariant = val
+                                        )
+                                        .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.LlamaVariantConfig.class))
+                                        .build())
+
                                 .option(Option.<HorseSpawnConfig.LlamaCarpetConfig>createBuilder()
                                         .name(Component.literal("Llama Carpet"))
-                                        .description(OptionDescription.of(Component.literal("Visual Horse Markings")))
+                                        .description(OptionDescription.of(Component.literal("Visual Llama Carpet")))
                                         .binding(
                                                 HorseSpawnConfig.LlamaCarpetConfig.NONE,
-                                                () -> config.carpet,
-                                                val -> config.carpet = val
+                                                () -> config.llamaCarpet,
+                                                val -> config.llamaCarpet = val
                                         )
                                         .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.LlamaCarpetConfig.class))
                                         .build())

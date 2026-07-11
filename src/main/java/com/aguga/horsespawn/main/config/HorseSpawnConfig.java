@@ -14,10 +14,11 @@ public class HorseSpawnConfig {
     public float jump = 3.0f;
     public int health = 20;
     public String spawnType = "HORSE";
-    public HorseMarkingsConfig markings = HorseMarkingsConfig.DEFAULT;
-    public HorseVariantConfig variant = HorseVariantConfig.DEFAULT;
+    public HorseMarkingsConfig horseMarkings = HorseMarkingsConfig.DEFAULT;
+    public HorseVariantConfig horseVariant = HorseVariantConfig.DEFAULT;
     public HorseArmorConfig armor = HorseArmorConfig.NONE;
-    public LlamaCarpetConfig carpet = LlamaCarpetConfig.NONE;
+    public LlamaCarpetConfig llamaCarpet = LlamaCarpetConfig.NONE;
+    public LlamaVariantConfig llamaVariant = LlamaVariantConfig.DEFAULT;
     public boolean defaultName = true;
     public String customName = "";
 
@@ -55,6 +56,10 @@ public class HorseSpawnConfig {
                 default -> null;
             };
         }
+    }
+
+    public enum LlamaVariantConfig {
+        DEFAULT, CREAMY, WHITE, BROWN, GRAY
     }
 
     public enum LlamaCarpetConfig {
