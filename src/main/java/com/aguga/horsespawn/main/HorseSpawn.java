@@ -99,6 +99,10 @@ public class HorseSpawn implements ModInitializer {
         setTamed(entity);
         entity.setPos(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
         serverWorld.addFreshEntity(entity);
+
+        if (CONFIG.giveLead) {
+            player.addItem(new ItemStack(Items.LEAD));
+        }
     }
 
     private boolean shouldSpawn(Player player, GameType gameMode) {

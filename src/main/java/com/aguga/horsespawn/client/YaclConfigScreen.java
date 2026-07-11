@@ -60,6 +60,17 @@ public class YaclConfigScreen {
                                         .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseArmorConfig.class))
                                         .build())
 
+                                .option(Option.<Boolean>createBuilder()
+                                        .name(Component.literal("Give lead"))
+                                        .description(OptionDescription.of(Component.literal("Give the player a lead for the companion")))
+                                        .binding(
+                                                false,
+                                                () -> config.giveLead,
+                                                val -> config.giveLead = val
+                                        )
+                                        .controller(TickBoxControllerBuilder::create)
+                                        .build())
+
                                 .build())
 
                         // Spawn Behavior Group

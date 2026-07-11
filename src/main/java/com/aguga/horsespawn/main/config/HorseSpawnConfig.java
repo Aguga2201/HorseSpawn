@@ -6,6 +6,7 @@ import net.minecraft.world.item.Items;
 public class HorseSpawnConfig {
     public boolean enableSaddle = true;
     public boolean enableChest = true;
+    public boolean giveLead = false;
     public boolean spawnInCreative = true;
     public boolean spawnOnce = true;
     public boolean overwriteStats = false;
