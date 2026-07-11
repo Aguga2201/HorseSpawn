@@ -9,13 +9,13 @@ import net.fabricmc.fabric.api.entity.event.v1.ServerPlayerEvents;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
-//? if >=26.1 {
 import net.minecraft.network.chat.Component;
+//? if >=26.1 {
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.animal.equine.*;
- //?} else {
+//?} else {
 /*import net.minecraft.resources.ResourceLocation;
-/*import net.minecraft.world.entity.animal.horse.*;
+import net.minecraft.world.entity.animal.horse.*;
 *///?}
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
@@ -96,7 +96,7 @@ public class HorseSpawn implements ModInitializer {
         setAttributes(entity);
         setEquipment(entity);
         setVisuals(entity, player);
-        setTamed(entity, player);
+        setTamed(entity);
         entity.setPos(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
         serverWorld.addFreshEntity(entity);
     }
@@ -193,17 +193,20 @@ public class HorseSpawn implements ModInitializer {
         }
 
         if (CONFIG.defaultName && CONFIG.customName.isEmpty()) {
+            //? if >= 26.1 {
             entity.setCustomName(Component.literal(player.getPlainTextName() + "'s Horse"));
+            //?} else {
+            /*entity.setCustomName(Component.literal(player.getDisplayName() + "'s Horse"));
+            *///?}
         }
         if (!CONFIG.customName.isEmpty()) {
             entity.setCustomName(Component.literal(CONFIG.customName));
         }
     }
 
-    private void setTamed(LivingEntity entity, Player player) {
+    private void setTamed(LivingEntity entity) {
         if (entity instanceof AbstractHorse horseEntity) {
             horseEntity.setTamed(true);
-            horseEntity.setOwner(player);
         }
     }
 
