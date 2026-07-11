@@ -7,11 +7,6 @@ import dev.isxander.yacl3.api.*;
 import dev.isxander.yacl3.api.controller.*;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-//? if >=26.1 {
-import net.minecraft.world.entity.animal.equine.*;
-//?} else {
-/*import net.minecraft.world.entity.animal.horse.*;
-*///?}
 
 import java.util.List;
 
@@ -111,7 +106,7 @@ public class YaclConfigScreen {
                                         )
                                         .controller(opt -> CyclingListControllerBuilder.create(opt)
                                                 .values(List.of("HORSE", "DONKEY", "MULE"))
-                                                .formatValue(val -> Component.literal(val)))
+                                                .formatValue(Component::literal))
                                         .build())
 
                                 .build())
@@ -123,6 +118,7 @@ public class YaclConfigScreen {
                         .name(Component.literal("Stats"))
                         .tooltip(Component.literal("Configure companion statistics"))
 
+                        // Mount Statistics Group
                         .group(OptionGroup.createBuilder()
                                 .name(Component.literal("Mount Statistics"))
                                 .description(OptionDescription.of(Component.literal("Customize the stats of spawned companions")))
@@ -189,26 +185,62 @@ public class YaclConfigScreen {
                         .name(Component.literal("Visuals"))
                         .tooltip(Component.literal("Configure Companion Visuals"))
 
-                        .option(Option.<HorseSpawnConfig.HorseVariantConfig>createBuilder()
-                                .name(Component.literal("Horse Variant"))
-                                .description(OptionDescription.of(Component.literal("Visual Horse Variant")))
-                                .binding(
-                                        HorseSpawnConfig.HorseVariantConfig.DEFAULT,
-                                        () -> config.variant,
-                                        val -> config.variant = val
-                                )
-                                .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseVariantConfig.class))
+                        // General Visuals Group
+                        .group(OptionGroup.createBuilder()
+                                .name(Component.literal("General Visuals"))
+                                .description(OptionDescription.of(Component.literal("General Visual options for all companion types")))
+
+                                .option(Option.<Boolean>createBuilder()
+                                        .name(Component.literal("Use Owner's Name"))
+                                        .description(OptionDescription.of(Component.literal("Names Companions after their owner")))
+                                        .binding(
+                                                true,
+                                                () -> config.defaultName,
+                                                val -> config.defaultName = val
+                                        )
+                                        .controller(BooleanControllerBuilder::create)
+                                        .build())
+
+                                .option(Option.<String>createBuilder()
+                                        .name(Component.literal("Companion Name"))
+                                        .description(OptionDescription.of(Component.literal("Custom Name for Companion (overwrites owner's name)")))
+                                        .binding(
+                                                "",
+                                                () -> config.customName,
+                                                val -> config.customName = val
+                                        )
+                                        .controller(StringControllerBuilder::create)
+                                        .build())
+
                                 .build())
 
-                        .option(Option.<HorseSpawnConfig.HorseMarkingsConfig>createBuilder()
-                                .name(Component.literal("Horse Markings"))
-                                .description(OptionDescription.of(Component.literal("Visual Horse Markings")))
-                                .binding(
-                                        HorseSpawnConfig.HorseMarkingsConfig.DEFAULT,
-                                        () -> config.markings,
-                                        val -> config.markings = val
-                                )
-                                .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseMarkingsConfig.class))
+                        // Horse Visuals Group
+                        .group(OptionGroup.createBuilder()
+                                .name(Component.literal("Horse Visuals"))
+                                .description(OptionDescription.of(Component.literal("Visuals specific to Horses")))
+
+                                .option(Option.<HorseSpawnConfig.HorseVariantConfig>createBuilder()
+                                        .name(Component.literal("Horse Variant"))
+                                        .description(OptionDescription.of(Component.literal("Visual Horse Variant")))
+                                        .binding(
+                                                HorseSpawnConfig.HorseVariantConfig.DEFAULT,
+                                                () -> config.variant,
+                                                val -> config.variant = val
+                                        )
+                                        .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseVariantConfig.class))
+                                        .build())
+
+                                .option(Option.<HorseSpawnConfig.HorseMarkingsConfig>createBuilder()
+                                        .name(Component.literal("Horse Markings"))
+                                        .description(OptionDescription.of(Component.literal("Visual Horse Markings")))
+                                        .binding(
+                                                HorseSpawnConfig.HorseMarkingsConfig.DEFAULT,
+                                                () -> config.markings,
+                                                val -> config.markings = val
+                                        )
+                                        .controller(opt -> EnumControllerBuilder.create(opt).enumClass(HorseSpawnConfig.HorseMarkingsConfig.class))
+                                        .build())
+
                                 .build())
 
                         .build())

@@ -10,14 +10,19 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 //? if >=26.1 {
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
+import net.minecraft.world.entity.animal.equine.*;
  //?} else {
 /*import net.minecraft.resources.ResourceLocation;
+/*import net.minecraft.world.entity.animal.horse.*;
 *///?}
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
-import net.minecraft.sounds.SoundSource;
+//? if < 1.21.10
+/*import net.minecraft.sounds.SoundSource;
+ *///?}
 import net.minecraft.world.entity.Entity;
 //? if >=1.21.4 {
 import net.minecraft.world.entity.EntitySpawnReason;
@@ -28,11 +33,6 @@ import net.minecraft.world.entity.LivingEntity;
 /*import net.minecraft.world.entity.MobSpawnType;
 *///?}
 import net.minecraft.world.entity.ai.attributes.Attributes;
-//? if >=26.1 {
-import net.minecraft.world.entity.animal.equine.*;
-//?} else {
-/*import net.minecraft.world.entity.animal.horse.*;
-*///?}
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -95,8 +95,8 @@ public class HorseSpawn implements ModInitializer {
 
         setAttributes(entity);
         setEquipment(entity);
-        setVisuals(entity);
-        setTamed(entity);
+        setVisuals(entity, player);
+        setTamed(entity, player);
         entity.setPos(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
         serverWorld.addFreshEntity(entity);
     }
@@ -177,7 +177,7 @@ public class HorseSpawn implements ModInitializer {
          *///?}
     }
 
-    private void setVisuals(LivingEntity entity) {
+    private void setVisuals(LivingEntity entity, Player player) {
         if (entity instanceof Horse horseEntity) {
             Variant variant = horseEntity.getVariant();
             if (CONFIG.variant != HorseSpawnConfig.HorseVariantConfig.DEFAULT) {
@@ -191,11 +191,19 @@ public class HorseSpawn implements ModInitializer {
 
             horseEntity.setVariantAndMarkings(variant, markings);
         }
+
+        if (CONFIG.defaultName && CONFIG.customName.isEmpty()) {
+            entity.setCustomName(Component.literal(player.getPlainTextName() + "'s Horse"));
+        }
+        if (!CONFIG.customName.isEmpty()) {
+            entity.setCustomName(Component.literal(CONFIG.customName));
+        }
     }
 
-    private void setTamed(LivingEntity entity) {
+    private void setTamed(LivingEntity entity, Player player) {
         if (entity instanceof AbstractHorse horseEntity) {
             horseEntity.setTamed(true);
+            horseEntity.setOwner(player);
         }
     }
 

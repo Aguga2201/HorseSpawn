@@ -16,6 +16,8 @@ public class HorseSpawnConfig {
     public HorseMarkingsConfig markings = HorseMarkingsConfig.DEFAULT;
     public HorseVariantConfig variant = HorseVariantConfig.DEFAULT;
     public HorseArmorConfig armor = HorseArmorConfig.NONE;
+    public boolean defaultName = true;
+    public String customName = "";
 
     public enum HorseMarkingsConfig {
         DEFAULT, NONE, WHITE, WHITE_FIELD, WHITE_DOTS, BLACK_DOTS
