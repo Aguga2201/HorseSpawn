@@ -137,8 +137,9 @@ public class HorseSpawn implements ModInitializer {
                  *///?}
             }
         }
-        if (entity instanceof AbstractChestedHorse donkeyEntity && CONFIG.enableChest) {
-            donkeyEntity.setChest(true);
+        if (entity instanceof AbstractChestedHorse chestedEntity && CONFIG.enableChest) {
+            chestedEntity.setChest(true);
+            chestedEntity.createInventory();
         }
     }
 

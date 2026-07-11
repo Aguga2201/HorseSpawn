@@ -1,3 +1,4 @@
 classTweaker  v1  official
 
 accessible method net/minecraft/world/entity/animal/equine/Horse setVariantAndMarkings (Lnet/minecraft/world/entity/animal/equine/Variant;Lnet/minecraft/world/entity/animal/equine/Markings;)V
+accessible method net/minecraft/world/entity/animal/equine/AbstractHorse createInventory ()V
