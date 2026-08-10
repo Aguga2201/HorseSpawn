@@ -96,7 +96,7 @@ public class HorseSpawn implements ModInitializer {
         setAttributes(entity);
         setEquipment(entity);
         setVisuals(entity, player);
-        setTamed(entity);
+        setTamed(entity, player);
         entity.setPos(getEntityCoordinates(player.getBlockX(), player.getBlockZ(), serverWorld));
         serverWorld.addFreshEntity(entity);
 
@@ -228,9 +228,14 @@ public class HorseSpawn implements ModInitializer {
         }
     }
 
-    private void setTamed(LivingEntity entity) {
+    private void setTamed(LivingEntity entity, Player player) {
         if (entity instanceof AbstractHorse horseEntity) {
             horseEntity.setTamed(true);
+            //? if >= 1.21.10 {
+            horseEntity.setOwner(player);
+            //?} else {
+            /*horseEntity.setOwnerUUID(player.getUUID());
+            *///?}
         }
     }
 
