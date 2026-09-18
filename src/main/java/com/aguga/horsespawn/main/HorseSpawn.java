@@ -10,7 +10,7 @@ import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayConnectionEvents;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-//? if >=26.1 {
+//? if >=1.21.11 {
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.entity.animal.equine.*;
 //?} else {
@@ -80,9 +80,9 @@ public class HorseSpawn implements ModInitializer {
             return;
         }
 
-        //? if >=26.1 {
+        //? if >=1.21.11 {
         Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
-        //?} else if >= 1.21.4 {
+        //?} else if >= 1.21.1 {
         /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
         *///?} else if >= 1.21.1 {
         /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld);
@@ -218,10 +218,10 @@ public class HorseSpawn implements ModInitializer {
 
         if (CONFIG.defaultName && CONFIG.customName.isEmpty()) {
             //? if >= 26.1 {
-            entity.setCustomName(Component.literal(player.getPlainTextName() + "'s " + entity.getName().getString()));
-            //?} else {
-            /*entity.setCustomName(Component.literal(player.getDisplayName().getString() + "'s " + entity.getName().getString()));
-            *///?}
+            /*entity.setCustomName(Component.literal(player.getPlainTextName() + "'s " + entity.getName().getString()));
+            *///?} else {
+            entity.setCustomName(Component.literal(player.getDisplayName().getString() + "'s " + entity.getName().getString()));
+            //?}
         }
         if (!CONFIG.customName.isEmpty()) {
             entity.setCustomName(Component.literal(CONFIG.customName));

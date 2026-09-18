@@ -1,5 +1,6 @@
 package com.aguga.horsespawn.main.config;
 
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 
@@ -67,6 +68,24 @@ public class HorseSpawnConfig {
 
         public Item toItem() {
             return switch (this) {
+                //? if >=26.2 {
+                /*case WHITE -> Items.CARPET.white();
+                case LIGHT_GRAY -> Items.CARPET.lightGray();
+                case GRAY -> Items.CARPET.gray();
+                case BLACK -> Items.CARPET.black();
+                case BROWN -> Items.CARPET.brown();
+                case RED -> Items.CARPET.red();
+                case ORANGE -> Items.CARPET.orange();
+                case YELLOW -> Items.CARPET.yellow();
+                case LIME -> Items.CARPET.lime();
+                case GREEN -> Items.CARPET.green();
+                case CYAN -> Items.CARPET.cyan();
+                case LIGHT_BLUE -> Items.CARPET.lightBlue();
+                case BLUE -> Items.CARPET.blue();
+                case PURPLE -> Items.CARPET.purple();
+                case MAGENTA -> Items.CARPET.magenta();
+                case PINK -> Items.CARPET.pink();
+                *///?} else {
                 case WHITE -> Items.WHITE_CARPET;
                 case LIGHT_GRAY -> Items.LIGHT_GRAY_CARPET;
                 case GRAY -> Items.GRAY_CARPET;
@@ -83,6 +102,7 @@ public class HorseSpawnConfig {
                 case PURPLE -> Items.PURPLE_CARPET;
                 case MAGENTA -> Items.MAGENTA_CARPET;
                 case PINK -> Items.PINK_CARPET;
+                //?}
                 default -> null;
             };
         }
