@@ -83,8 +83,6 @@ public class HorseSpawn implements ModInitializer {
         //? if >=1.21.11 {
         Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(Identifier.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
         //?} else if >= 1.21.1 {
-        /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.getValue(ResourceLocation.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld, EntitySpawnReason.EVENT);
-        *///?} else if >= 1.21.1 {
         /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.fromNamespaceAndPath("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld);
         *///?} else {
         /*Entity rawEntity = BuiltInRegistries.ENTITY_TYPE.get(ResourceLocation.tryBuild("minecraft", CONFIG.spawnType.toLowerCase())).create(serverWorld);
@@ -218,10 +216,10 @@ public class HorseSpawn implements ModInitializer {
 
         if (CONFIG.defaultName && CONFIG.customName.isEmpty()) {
             //? if >= 26.1 {
-            /*entity.setCustomName(Component.literal(player.getPlainTextName() + "'s " + entity.getName().getString()));
-            *///?} else {
-            entity.setCustomName(Component.literal(player.getDisplayName().getString() + "'s " + entity.getName().getString()));
-            //?}
+            entity.setCustomName(Component.literal(player.getPlainTextName() + "'s " + entity.getName().getString()));
+            //?} else {
+            /*entity.setCustomName(Component.literal(player.getDisplayName().getString() + "'s " + entity.getName().getString()));
+            *///?}
         }
         if (!CONFIG.customName.isEmpty()) {
             entity.setCustomName(Component.literal(CONFIG.customName));

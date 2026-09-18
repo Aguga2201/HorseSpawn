@@ -69,7 +69,7 @@ public class HorseSpawnConfig {
         public Item toItem() {
             return switch (this) {
                 //? if >=26.2 {
-                /*case WHITE -> Items.CARPET.white();
+                case WHITE -> Items.CARPET.white();
                 case LIGHT_GRAY -> Items.CARPET.lightGray();
                 case GRAY -> Items.CARPET.gray();
                 case BLACK -> Items.CARPET.black();
@@ -85,8 +85,8 @@ public class HorseSpawnConfig {
                 case PURPLE -> Items.CARPET.purple();
                 case MAGENTA -> Items.CARPET.magenta();
                 case PINK -> Items.CARPET.pink();
-                *///?} else {
-                case WHITE -> Items.WHITE_CARPET;
+                //?} else {
+                /*case WHITE -> Items.WHITE_CARPET;
                 case LIGHT_GRAY -> Items.LIGHT_GRAY_CARPET;
                 case GRAY -> Items.GRAY_CARPET;
                 case BLACK -> Items.BLACK_CARPET;
@@ -102,7 +102,7 @@ public class HorseSpawnConfig {
                 case PURPLE -> Items.PURPLE_CARPET;
                 case MAGENTA -> Items.MAGENTA_CARPET;
                 case PINK -> Items.PINK_CARPET;
-                //?}
+                *///?}
                 default -> null;
             };
         }

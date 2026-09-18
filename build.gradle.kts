@@ -76,4 +76,6 @@ tasks.jar {
     from("LICENSE") {
         rename { "${it}_$projectName" }
     }
+
+    destinationDirectory = rootProject.layout.buildDirectory.dir("libs")
 }
